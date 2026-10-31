@@ -93,7 +93,8 @@ const Otp = () => {
         return;
       }
 
-      router.replace("/");
+      router.replace("/(onboarding)/onboarding");
+      
     } catch (error) {
       console.error("OTP verification failed:", error);
 
@@ -174,8 +175,8 @@ const Otp = () => {
                       <View
                         key={index}
                         className={`flex-1 h-14 items-center justify-center rounded-xl border bg-white ${value.length === index
-                            ? "border-brand-blue"
-                            : "border-[#E8E6DF]"
+                          ? "border-brand-blue"
+                          : "border-[#E8E6DF]"
                           }`}
                       >
                         <Text className="text-xl font-semibold text-[#1A1D26]">

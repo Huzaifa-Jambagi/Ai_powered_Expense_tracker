@@ -1,5 +1,5 @@
-import { db } from "../db/db";
-import { users } from "../db/schema/index";
+import { db } from "../db/db.js";
+import { users } from "../db/schema/index.js";
 import { eq } from "drizzle-orm";
 
 export const create = async (id: string, clerk_id: string, name: string, email: string) => {

@@ -1,6 +1,8 @@
 import "dotenv/config";
+import "./instrument.js";
 import app from "./app.js";
-import { pool } from "./db/db";
+import { pool } from "./db/db.js";
+import * as Sentry from "@sentry/node";
 
 const PORT = Number(process.env.PORT) || 3000;
 

@@ -1,7 +1,9 @@
 import express  from "express";
-import { users } from "./userController";
+import { users } from "./userController.js";
 const router=express.Router();
 
-router.post("/webhooks",express.raw({ type: 'application/json' }),users)
+const rawJson=express.raw({ type: 'application/json' ,limit:"1mb"});
 
-export {router};
+router.post("/users",rawJson,users)
+
+export default router;

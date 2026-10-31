@@ -45,69 +45,78 @@ export default function SignUpScreen() {
     },
   });
 
-const handleGoogleSignUp = async () => {
-  try {
-    const { createdSessionId, setActive } = await startGoogleAuthenticationFlow();
+  const handleGoogleSignUp = async () => {
+    try {
+      const { createdSessionId, setActive, signIn, signUp } = await startGoogleAuthenticationFlow();
 
-    if (createdSessionId && setActive) {
+
+      if (!createdSessionId || !setActive) {
+        Alert.alert("Authentication incomplete");
+        return;
+      }
+
       await setActive({ session: createdSessionId });
-      router.replace("/");
-    } else {
+
+      if (signUp) {
+        router.replace("/(onboarding)/onboarding");
+        return;
+      }
+
+      if (signIn) {
+        // Existing Clerk account
+        // const user = await getCurrentUser();
+
+        // router.replace(
+        //   user.onboarding_completed
+        //     ? "/(root)/(tabs)"
+        //     : "/(root)/onboarding"
+        // );
+        return;
+      }
+      Alert.alert("Authentication incomplete");
+
+    } catch (err: any) {
       Alert.alert(
-        "Sign-up incomplete",
-        "Google authentication did not create a session."
+        "Google sign-up failed",
+        err?.message || "Unknown authentication error"
       );
     }
-  } catch (err: any) {
-  console.log("========== GOOGLE AUTH ERROR ==========");
-  console.log("Message:", err?.message);
-  console.log("Code:", err?.code);
-  console.log("Status:", err?.status);
-  console.log("Clerk errors:", JSON.stringify(err?.errors, null, 2));
-  console.log("Full error:", JSON.stringify(err, null, 2));
-  console.log("========================================");
-
-  Alert.alert(
-    "Google sign-up failed",
-    err?.message || "Unknown authentication error"
-  );
-}
-};
+  };
 
 
-const onSignUpPress = async (values: SignUpFormSchema) => {
-  try {
-    const { error } = await signUp.password({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      emailAddress: values.email,
-      password: values.password,
-    });
+  const onSignUpPress = async (values: SignUpFormSchema) => {
+    try {
+      const { error } = await signUp.password({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        emailAddress: values.email,
+        password: values.password,
+      });
 
-    if (error) {
-      alert(error.message);
-      return;
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      const { error: sendError } =
+        await signUp.verifications.sendEmailCode();
+
+      if (sendError) {
+        alert(sendError.message);
+        return;
+      }
+
+      router.push({
+        pathname: "/otp",
+        params: {
+          email: values.email,
+          flow: "sign-up",
+        },
+      });
+    } catch (error) {
+      console.error(error);
     }
-
-    const { error: sendError } =
-      await signUp.verifications.sendEmailCode();
-
-    if (sendError) {
-      alert(sendError.message);
-      return;
-    }
-
-     router.push({
-          pathname: "/otp",
-          params: {
-            email: values.email,
-            flow: "sign-up",
-          },
-        });
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
 
   return (
     <KeyboardAvoidingView

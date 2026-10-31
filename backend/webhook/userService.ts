@@ -1,5 +1,5 @@
 import { v7 as uuidv7 } from "uuid";
-import * as userRepository from "./userRepository";
+import * as userRepository from "./userRepository.js";
 
 export const createUser = async (user: any) => {
 
