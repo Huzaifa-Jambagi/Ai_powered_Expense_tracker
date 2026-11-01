@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import "dotenv/config";
 import { verifyWebhook } from "@clerk/express/webhooks";
 
-import * as userService from "./userService.js";
+import * as userService from "./webhookService.js";
 
-export const users = async (req: Request, res: Response) => {
+export const clerk_webhook = async (req: Request, res: Response) => {
   // Verify webhook signature
   let evt;
 

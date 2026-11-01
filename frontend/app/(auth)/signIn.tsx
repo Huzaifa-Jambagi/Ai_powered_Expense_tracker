@@ -2,6 +2,8 @@
 import { useSignInWithGoogle } from '@clerk/expo/google';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useUser } from "../../hooks/useUser";
+import { useState } from 'react';
 import {
   Text,
   View,
@@ -28,6 +30,7 @@ export default function SignInScreen() {
   const router = useRouter();
 
   const isLoading = fetchStatus === "fetching";
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const {
     control,
@@ -42,6 +45,26 @@ export default function SignInScreen() {
     },
   });
 
+
+  const { refetch } = useUser();
+
+  const navigateUser = async () => {    
+    try {
+      const { data: user, error } = await refetch();
+
+      if (error || !user) {
+        Alert.alert("Error", "Unable to fetch user details.");
+        return;
+      }
+      router.replace(
+        user.onboarding_completed ? "/(root)/(tabs)" : "/(onboarding)/onboarding"
+      );
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      Alert.alert("Error", "Unable to fetch user details.");
+    }
+  };
+
   const onSignInPress = async (values: SignInFormSchema) => {
     try {
       const { error } = await signIn.password({
@@ -55,12 +78,9 @@ export default function SignInScreen() {
       }
 
       if (signIn.status === "complete") {
-        await signIn.finalize({
-          navigate: ({ session, decorateUrl }) => {
-            if (session?.currentTask) return;
-            router.replace(decorateUrl("/") as any);
-          },
-        });
+        await signIn.finalize();
+
+        await navigateUser();
 
         return;
       }
@@ -112,36 +132,50 @@ export default function SignInScreen() {
   };
 
 
-const handleGoogleSignIn = async () => {
-  try {
-    const { createdSessionId, setActive } = await startGoogleAuthenticationFlow();
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const { createdSessionId, setActive, signIn, signUp } = await startGoogleAuthenticationFlow();
+       
+      if (!createdSessionId || !setActive) {
+        Alert.alert(
+          "Sign-in incomplete",
+          "Google authentication did not create a session."
+        );
+        return;
+      }
 
-    if (createdSessionId && setActive) {
       await setActive({ session: createdSessionId });
-      router.replace("/");
-    } else {
+
+      if (signUp?.status === "complete") {
+        router.replace("/(onboarding)/onboarding");
+        return;
+      }
+
+      if (signIn?.status === "complete") {
+        await navigateUser();
+        return;
+      }
+
+      Alert.alert("Sign-in incomplete");
+    } catch (err: any) {
+      if (
+        err.code === "SIGN_IN_CANCELLED" ||
+        err.code === "-5"
+      ) {
+        return;
+      }
+
+      console.error("Google sign-in error:", err);
+
       Alert.alert(
-        "Sign-in incomplete",
-        "Google authentication did not create a session."
+        "Google sign-in failed",
+        err.message || "An error occurred during Google sign-in."
       );
+    } finally {
+      setIsGoogleLoading(false);
     }
-  } catch (err: any) {
-    if (
-      err.code === "SIGN_IN_CANCELLED" ||
-      err.code === "-5"
-    ) {
-      return;
-    }
-
-    console.error("Google sign-in error:", err);
-
-    Alert.alert(
-      "Google sign-in failed",
-      err.message || "An error occurred during Google sign-in."
-    );
-  }
-};
-
+  };
 
   return (
     <KeyboardAvoidingView
@@ -231,7 +265,7 @@ const handleGoogleSignIn = async () => {
 
         <TouchableOpacity
           onPress={handleSubmit(onSignInPress)}
-          disabled={isLoading}
+          disabled={isLoading || isGoogleLoading}
           className="bg-brand-blue py-4 w-full items-center rounded-xl mb-3"
         >
           {isLoading ? (
@@ -253,6 +287,7 @@ const handleGoogleSignIn = async () => {
 
         <TouchableOpacity
           onPress={handleGoogleSignIn}
+          disabled={isLoading || isGoogleLoading}
           className="flex-row items-center justify-center border border-[#E0E2DC] bg-white rounded-xl py-4 mb-4 gap-1"
         >
           <GoogleLogo width={20} height={20} />

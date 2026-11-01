@@ -3,14 +3,16 @@ import * as Sentry from "@sentry/node";
 import "dotenv/config";
 import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
-import userRoutes  from "./webhook/userRoutes.js";
+import webhookRoutes  from "./webhook/webhookRoutes.js";
+import userRoutes from "./users/userRoutes.js"
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
 // Middlewares
 app.use(cors({ origin: "*" }));
 
-app.use("/api/webhooks", userRoutes);
+app.use("/api/v1/webhooks", webhookRoutes);
 
 // Normal application middleware
 app.use(express.json());
@@ -22,6 +24,9 @@ app.use(
   })
 );
 
+//routes
+app.use("/api/v1/users", userRoutes);
+
 // Health check
 app.get("/health", (req, res) => {
   res.status(200).json({
@@ -29,6 +34,8 @@ app.get("/health", (req, res) => {
     message: "Server is healthy",
   });
 });
+
+app.use(errorHandler)
 
 app.get("/debug-sentry", function mainHandler(req, res) {
   // Send a log before throwing the error

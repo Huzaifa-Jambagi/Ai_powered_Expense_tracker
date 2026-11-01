@@ -18,6 +18,7 @@ import { Link, useRouter } from "expo-router";
 import Logo from "../../assets/Logo.svg";
 import GoogleLogo from "../../assets/googleLogo.svg";
 import { UserRound, Mail, LockKeyhole } from "lucide-react-native";
+import { useUser } from "../../hooks/useUser";
 import {
   signUpSchema,
   type SignUpFormSchema,
@@ -27,6 +28,7 @@ export default function SignUpScreen() {
   const router = useRouter();
 
   let isLoading = fetchStatus === "fetching";
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [email, setEmail] = useState("");
   const { startGoogleAuthenticationFlow } = useSignInWithGoogle();
 
@@ -45,10 +47,36 @@ export default function SignUpScreen() {
     },
   });
 
-  const handleGoogleSignUp = async () => {
-    try {
-      const { createdSessionId, setActive, signIn, signUp } = await startGoogleAuthenticationFlow();
+  const { refetch } = useUser();
+  const navigateUser = async () => {
 
+    try {
+      const { data: user, error } = await refetch();
+
+      if (error || !user) {
+        Alert.alert("Error", "Unable to fetch user details.");
+        return;
+      }
+
+      router.replace(
+        user.onboarding_completed ? "/(root)/(tabs)" : "/(onboarding)/onboarding"
+      );
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      Alert.alert("Error", "Unable to fetch user details.");
+    }
+  };
+
+
+  const handleGoogleSignUp = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const {
+        createdSessionId,
+        setActive,
+        signIn,
+        signUp,
+      } = await startGoogleAuthenticationFlow();
 
       if (!createdSessionId || !setActive) {
         Alert.alert("Authentication incomplete");
@@ -57,29 +85,24 @@ export default function SignUpScreen() {
 
       await setActive({ session: createdSessionId });
 
-      if (signUp) {
+      if (signUp?.status === "complete") {
         router.replace("/(onboarding)/onboarding");
         return;
       }
 
-      if (signIn) {
-        // Existing Clerk account
-        // const user = await getCurrentUser();
-
-        // router.replace(
-        //   user.onboarding_completed
-        //     ? "/(root)/(tabs)"
-        //     : "/(root)/onboarding"
-        // );
+      if (signIn?.status === "complete") {
+        await navigateUser();
         return;
       }
-      Alert.alert("Authentication incomplete");
 
+      Alert.alert("Authentication incomplete");
     } catch (err: any) {
       Alert.alert(
         "Google sign-up failed",
         err?.message || "Unknown authentication error"
       );
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -248,7 +271,7 @@ export default function SignUpScreen() {
 
         <TouchableOpacity
           onPress={handleSubmit(onSignUpPress)}
-          disabled={isLoading}
+          disabled={isLoading || isGoogleLoading}
           className="bg-brand-blue py-4 w-full items-center rounded-xl mb-3"
         >
           {isLoading ? (
@@ -268,6 +291,7 @@ export default function SignUpScreen() {
 
         <TouchableOpacity
           onPress={handleGoogleSignUp}
+          disabled={isLoading || isGoogleLoading}
           className="flex-row items-center justify-center border border-[#E0E2DC] bg-white rounded-xl py-4 mb-4 gap-1"
         >
           <GoogleLogo width={20} height={20} />
@@ -311,6 +335,5 @@ export default function SignUpScreen() {
       </View>
     </KeyboardAvoidingView>
   );
-
 
 }

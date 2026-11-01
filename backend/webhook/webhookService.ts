@@ -1,5 +1,5 @@
 import { v7 as uuidv7 } from "uuid";
-import * as userRepository from "./userRepository.js";
+import * as webhookRepository from "./webhookRepository.js";
 
 export const createUser = async (user: any) => {
 
@@ -11,7 +11,7 @@ export const createUser = async (user: any) => {
 
     console.log("Creating user:", user.id);
 
-    userRepository.create(uuidv7(),id,name,email)
+    webhookRepository.create(uuidv7(),id,name,email)
 
 };
 
@@ -24,11 +24,11 @@ export const updateUser = async (user: any) => {
 
     console.log("Updating user:", id);
 
-    await userRepository.update(id, name, email);
+    await webhookRepository.update(id, name, email);
 };
 
 
 export const deleteUser = async (user: any) => {
         console.log("Deleting user:", user.id);
-    await userRepository.remove(user.id);
+    await webhookRepository.remove(user.id);
 };
