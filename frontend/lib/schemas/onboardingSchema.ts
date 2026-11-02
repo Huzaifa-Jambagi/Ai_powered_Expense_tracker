@@ -6,7 +6,7 @@ const validCurrencyCodes = cc.codes();
 export const onboardingSchema = z.object({
   startingBalance: z
     .string()
-    .min(1, "Please enter a starting balance.")
+    .min(0, "Please enter a starting balance.")
     .refine((v) => {
       const parsed = parseFloat(v.replace(/,/g, ""));
       return !Number.isNaN(parsed) && parsed > 0;

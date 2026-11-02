@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, numeric, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, numeric, timestamp, boolean,index } from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 import { accounts } from "./accounts.js";
 
@@ -19,9 +19,9 @@ export const transactions = pgTable("transactions", {
 
     date: timestamp("date").notNull(),
 
-    user_id: uuid("user_id")
+    user_id: varchar("user_id")
         .notNull()
-        .references(() => users.id, { onDelete: "cascade" }),
+        .references(() => users.clerk_id, { onDelete: "cascade" }),
 
     status: varchar("status", { length: 50 }).notNull(),
 
@@ -36,4 +36,7 @@ export const transactions = pgTable("transactions", {
     created_at: timestamp("created_at").notNull().defaultNow(),
 
     updated_at: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => [
+  index("transactions_user_id_idx").on(table.user_id),
+  index("transactions_account_id_idx").on(table.account_id),
+]);

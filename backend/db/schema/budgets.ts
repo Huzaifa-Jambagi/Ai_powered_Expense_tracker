@@ -1,12 +1,12 @@
-import { pgTable, uuid, numeric, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, numeric, timestamp,varchar,index } from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const budgets = pgTable("budgets", {
     id: uuid("id").primaryKey().defaultRandom(),
 
-    user_id: uuid("user_id")
+    user_id: varchar("user_id", { length: 255 })
         .notNull()
-        .references(() => users.id, { onDelete: "cascade" }),
+        .references(() => users.clerk_id, { onDelete: "cascade" }),
 
     amount: numeric("amount").notNull(),
 
@@ -17,4 +17,6 @@ export const budgets = pgTable("budgets", {
     created_at: timestamp("created_at").notNull().defaultNow(),
 
     updated_at: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => [
+  index("budgets_user_id_idx").on(table.user_id),
+]);

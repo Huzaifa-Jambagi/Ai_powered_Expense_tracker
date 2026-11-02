@@ -6,6 +6,7 @@ import { useCompleteOnboarding } from "../../hooks/useOnboarding";
 import { Feather } from "@expo/vector-icons";
 import { CurrencyPicker, ALL_CURRENCIES } from "../../components/CurrencyPicker";
 import Logo from "../../assets/Logo.svg";
+import { useRouter } from "expo-router";
 import {
   View,
   TextInput,
@@ -33,7 +34,7 @@ export default function OnboardingScreen() {
     },
   });
 
-
+  const router = useRouter();
   const {
     mutate: completeOnboarding,
     isPending,
@@ -42,10 +43,17 @@ export default function OnboardingScreen() {
   } = useCompleteOnboarding();
 
   const onSubmit = (values: OnboardingFormValues) => {
-    completeOnboarding({
-      startingBalance: Number(values.startingBalance.replace(/,/g, "")),
-      currency: values.currency,
-    });
+    completeOnboarding(
+      {
+        startingBalance: Number(values.startingBalance.replace(/,/g, "")),
+        currency: values.currency,
+      },
+      {
+        onSuccess: () => {
+          router.replace("/(root)/(tabs)");
+        },
+      }
+    );
   };
 
   const [pickerOpen, setPickerOpen] = useState(false);

@@ -5,3 +5,7 @@ export const getUserDetails = async (clerkId: string) => {
 
   return user;
 };
+
+export const completeOnboarding = async (clerkId: string, startingBalance: number, currency: string) => {
+  return await userRepository.completeOnboarding(clerkId, startingBalance, currency);
+};

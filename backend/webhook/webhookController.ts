@@ -21,8 +21,8 @@ export const clerk_webhook = async (req: Request, res: Response) => {
 
   // Process verified event
   try {
-    console.log("Event type:", evt.type);
-
+console.log("Event type:", evt.type);
+console.log("Event data:", JSON.stringify(evt.data, null, 2));
     switch (evt.type) {
       case "user.created":
         await userService.createUser(evt.data);
@@ -33,11 +33,11 @@ export const clerk_webhook = async (req: Request, res: Response) => {
         break;
 
       case "user.deleted":
-        await userService.deleteUser(evt.data.id);
+        await userService.deleteUser(evt.data);
         break;
 
       default:
-        console.log("Unhandled webhook event:", evt.type);
+        console.log("Unhandled webhook event:", evt.type,evt.data);
     }
 
     return res.status(200).json({

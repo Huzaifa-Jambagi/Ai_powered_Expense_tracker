@@ -29,6 +29,12 @@ export const updateUser = async (user: any) => {
 
 
 export const deleteUser = async (user: any) => {
-        console.log("Deleting user:", user.id);
-    await webhookRepository.remove(user.id);
+  console.log("Delete payload:", user);
+  console.log("Delete ID:", user?.id);
+
+  if (!user?.id) {
+    throw new Error("Missing Clerk user ID in deletion payload");
+  }
+
+  await webhookRepository.remove(user.id);
 };
