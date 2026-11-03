@@ -5,8 +5,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import "../global.css"
 import * as SplashScreen from "expo-splash-screen";
 import { QueryClientProvider } from "@tanstack/react-query";
-
-import { queryClient } from '../lib/queryClient';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { queryClient } from '../lib/query/queryClient';
 import ApiInterceptor from "../components/ApiInterceptor"
 
 SplashScreen.preventAutoHideAsync().catch(console.warn);
@@ -20,12 +20,14 @@ if (!publishableKey) {
 export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache} >
-      <QueryClientProvider client={queryClient}>
-        <ApiInterceptor />
-        <SafeAreaProvider>
-          <Slot />
-        </SafeAreaProvider>
-      </QueryClientProvider>
+      <GestureHandlerRootView>
+        <QueryClientProvider client={queryClient}>
+          <ApiInterceptor />
+          <SafeAreaProvider>
+            <Slot />
+          </SafeAreaProvider>
+        </QueryClientProvider>
+      </GestureHandlerRootView>
     </ClerkProvider>
   )
 }
