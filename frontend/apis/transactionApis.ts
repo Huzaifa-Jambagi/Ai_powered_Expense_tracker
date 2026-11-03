@@ -34,6 +34,7 @@ export const getTransactionsApi = async (filters: TransactionFilters = {}): Prom
             accountId: filters.accountId ?? undefined,
         },
     });
+    console.log("transaction fetched",data.data)
 
     return data.data;
 };

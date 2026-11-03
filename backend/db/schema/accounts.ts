@@ -2,18 +2,15 @@ import { pgTable, uuid, varchar, numeric, boolean, timestamp, index, pgEnum } fr
 import { users } from "./users.js";
 
 export const accountTypeEnum = pgEnum("account_type", [
-  "cash",
-  "bank",
-  "credit_card",
-  "savings",
+  "CASH", "BANK", "CREDIT_CARD", "SAVINGS"
 ]);
 
 export const accounts = pgTable("accounts", {
   id: uuid("id").primaryKey().defaultRandom(),
 
-  name: varchar("name", { length: 255 }).notNull().default("bank"),
+  name: varchar("name", { length: 255 }).notNull().default("BANK"),
 
-  type: accountTypeEnum("type").notNull().default("bank"),
+  type: accountTypeEnum("type").notNull().default("BANK"),
 
   balance: numeric("balance").notNull().default("0"),
 

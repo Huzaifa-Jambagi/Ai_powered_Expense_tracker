@@ -3,8 +3,11 @@ import * as Sentry from "@sentry/node";
 import "dotenv/config";
 import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
-import webhookRoutes  from "./webhook/webhookRoutes.js";
+import webhookRoutes from "./webhook/webhookRoutes.js";
 import userRoutes from "./users/userRoutes.js"
+import accountRoutes from "./accounts/accounts.routes.js"
+import transactionRoutes from "./transactions/transaction.route.js"
+import budgetRoutes from "./budget/budget.route.js"
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -26,6 +29,9 @@ app.use(
 
 //routes
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/accounts", accountRoutes);
+app.use("/api/v1/transactions", transactionRoutes);
+app.use("/api/v1/budgets", budgetRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
@@ -38,11 +44,9 @@ app.get("/health", (req, res) => {
 app.use(errorHandler)
 
 app.get("/debug-sentry", function mainHandler(req, res) {
-  // Send a log before throwing the error
   Sentry.logger.info('User triggered test error', {
     action: 'test_error_endpoint',
   });
-  // Send a test metric before throwing the error
   Sentry.metrics.count('test_counter', 1);
   throw new Error("My first Sentry error!");
 });

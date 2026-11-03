@@ -15,16 +15,11 @@ export const getUserDetails = async (clerkId: string) => {
 }
 
 export const completeOnboarding = async (clerkId: string, startingBalance: number, currency: string) => {
-
   await db.transaction(async (tx) => {
-    const [updatedUser] = await tx
+    await tx
       .update(users)
-      .set({
-        onboarding_completed: true,
-        currency,
-      })
-      .where(eq(users.clerk_id, clerkId))
-      .returning();
+      .set({ onboarding_completed: true, currency })
+      .where(eq(users.clerk_id, clerkId));
 
     const [account] = await tx
       .insert(accounts)
@@ -34,20 +29,19 @@ export const completeOnboarding = async (clerkId: string, startingBalance: numbe
         user_id: clerkId,
       })
       .returning();
-    console.log(updatedUser, account);
 
     await tx.insert(transactions).values({
       user_id: clerkId,
       account_id: account.id,
       type: "INCOME",
-      amount: startingBalance.toString(),
-      category: "pocket_money",
+      amount: startingBalance,
+      category: "other_income",
       description: "Starting balance",
       date: new Date(),
       input_method: "MANUAL",
       status: "COMPLETED",
     });
-    
-    return { user: updatedUser, account };
   });
+
+  return true;
 };

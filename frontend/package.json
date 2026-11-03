@@ -14,6 +14,7 @@
     "country-to-currency": "^3.0.1",
     "currency-codes": "^2.2.0",
     "currency-symbol-map": "^5.1.0",
+    "date-fns": "^4.4.0",
     "expo": "~57.0.31",
     "expo-auth-session": "~57.0.16",
     "expo-constants": "~57.0.22",

@@ -3,7 +3,7 @@ import { queryKeys } from "../lib/query/queryKeys";
 import { useUser } from "@clerk/expo";
 import { getBudget,setBudget } from "../apis/budgetApis";
 
-export const useAccountsQuery = () => {
+export const useBudgetQuery = () => {
 
     const { user } = useUser()
 

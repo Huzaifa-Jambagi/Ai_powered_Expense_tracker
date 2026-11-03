@@ -12,7 +12,7 @@ export type Budget = {
 export const getBudget = async (): Promise<Budget | null> => {
 
     const { data } = await api.get<Budget | null>("api/vi/budgets/get");
-
+        console.log("budget fetched",data)
     return data;
 }
 

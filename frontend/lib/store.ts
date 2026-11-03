@@ -25,17 +25,3 @@ export const userStorage = {
     storage.remove("user");
   },
 };
-
-export const onboardingStorage = {
-  setIsOnboarded: (clerkId: string, value: boolean) => {
-    storage.set(`onboarded_${clerkId}`, value);
-  },
-
-  getIsOnboarded: (clerkId: string): boolean => {
-    return storage.getBoolean(`onboarded_${clerkId}`) ?? false;
-  },
-
-  clearIsOnboarded: (clerkId: string) => {
-    storage.remove(`onboarded_${clerkId}`);
-  },
-};
