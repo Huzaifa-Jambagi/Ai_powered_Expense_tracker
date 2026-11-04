@@ -8,29 +8,13 @@ import { userStorage } from "../../lib/store";
 
 export default function RootGroupLayout() {
   const { isLoaded, isSignedIn } = useAuth();
-  const { data: user, isLoading, refetch } = useUser();
-  const userId = user
+  const { data: user, isLoading } = useUser(isLoaded && isSignedIn);
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && !user) {
-      refetch();
-    }
-  }, [isLoaded, isSignedIn, user, refetch]);
+    if (!user) return;
 
-  useEffect(() => {
-    if (!user || !userId) return;
-
-    const [firstName, ...lastNameParts] = user.name.split(" ");
-
-    userStorage.setUser({
-      clerkId: user.clerk_id,
-      firstName: firstName || null,
-      lastName: lastNameParts.join(" ") || null,
-      email: user.email,
-      imageUrl: user.image_url,
-      currency: user.currency,
-    });
-  }, [user, userId]);
+    userStorage.setUser(user);
+  }, [user]);
 
   if (!isLoaded || (isSignedIn && (!user || isLoading))) {
     return <DashboardSkeleton />;

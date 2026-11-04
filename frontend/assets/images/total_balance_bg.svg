@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="800" viewBox="0 0 1600 800" fill="none">
+  <defs>
+    <linearGradient id="base" x1="90" y1="40" x2="1510" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#003B29"/>
+      <stop offset="0.48" stop-color="#00452D"/>
+      <stop offset="1" stop-color="#00291E"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1260 560) rotate(-27) scale(650 370)">
+      <stop stop-color="#00D957" stop-opacity=".34"/>
+      <stop offset=".52" stop-color="#00B94A" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#00A743" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ribbon" x1="790" y1="790" x2="1570" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00A83F" stop-opacity="0"/>
+      <stop offset=".42" stop-color="#00E84D"/>
+      <stop offset=".72" stop-color="#19FF62"/>
+      <stop offset="1" stop-color="#00B947" stop-opacity=".25"/>
+    </linearGradient>
+    <linearGradient id="shade" x1="800" y1="0" x2="800" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#001E17" stop-opacity=".1"/>
+      <stop offset="1" stop-color="#001A13" stop-opacity=".28"/>
+    </linearGradient>
+    <clipPath id="clip"><rect width="1600" height="800" rx="54"/></clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="1600" height="800" fill="url(#base)"/>
+    <rect width="1600" height="800" fill="url(#glow)"/>
+    <path d="M650 820C930 780 1080 665 1210 510C1350 345 1450 170 1625 25" stroke="url(#ribbon)" stroke-width="115" opacity=".13"/>
+    <path d="M700 820C980 770 1115 650 1240 500C1380 330 1490 155 1625 45" stroke="url(#ribbon)" stroke-width="3" opacity=".95"/>
+    <g stroke="#00E94F" stroke-width="1.25" fill="none" opacity=".5">
+      <path d="M520 820C850 790 1040 700 1190 545C1345 385 1455 195 1625 55"/>
+      <path d="M545 820C870 785 1055 690 1205 535C1360 375 1465 190 1625 65"/>
+      <path d="M570 820C890 780 1070 680 1220 525C1375 365 1475 185 1625 75"/>
+      <path d="M595 820C910 775 1085 670 1235 515C1390 355 1485 180 1625 85"/>
+      <path d="M620 820C930 770 1100 660 1250 505C1405 345 1495 175 1625 95"/>
+      <path d="M645 820C950 765 1115 650 1265 495C1420 335 1505 170 1625 105"/>
+      <path d="M670 820C970 760 1130 640 1280 485C1435 325 1515 165 1625 115"/>
+      <path d="M695 820C990 755 1145 630 1295 475C1450 315 1525 160 1625 125"/>
+      <path d="M720 820C1010 750 1160 620 1310 465C1465 305 1535 155 1625 135"/>
+      <path d="M745 820C1030 745 1175 610 1325 455C1480 295 1545 150 1625 145"/>
+      <path d="M770 820C1050 740 1190 600 1340 445C1495 285 1555 145 1625 155"/>
+      <path d="M795 820C1070 735 1205 590 1355 435C1510 275 1565 140 1625 165"/>
+      <path d="M820 820C1090 730 1220 580 1370 425C1525 265 1575 135 1625 175"/>
+      <path d="M845 820C1110 725 1235 570 1385 415C1540 255 1585 130 1625 185"/>
+      <path d="M870 820C1130 720 1250 560 1400 405C1555 245 1595 125 1625 195"/>
+      <path d="M895 820C1150 715 1265 550 1415 395C1570 235 1605 120 1625 205"/>
+      <path d="M920 820C1170 710 1280 540 1430 385C1585 225 1615 115 1625 215"/>
+      <path d="M945 820C1190 705 1295 530 1445 375C1600 215 1625 110 1625 225"/>
+    </g>
+    <path d="M0 0H1600V800H0V0Z" fill="url(#shade)"/>
+  </g>
+</svg>

@@ -12,19 +12,20 @@ export const find = async (clerk_id: string) => {
     return user ?? null;
 };
 
-export const create = async (id: string, clerk_id: string, name: string, email: string) => {
+export const create = async (id: string, clerk_id: string, name: string, email: string,image_url:string) => {
     return db.insert(users).values({
         id,
         clerk_id,
         name,
         email,
+        image_url,
         onboarding_completed: false
     });
 };
 
-export const update = async (clerk_id: string, name: string, email: string) => {
+export const update = async (clerk_id: string, name: string, email: string, image_url: string) => {
     return db.update(users)
-        .set({ name, email })
+        .set({ name, email, image_url })
         .where(eq(users.clerk_id, clerk_id))
         .returning();
 };

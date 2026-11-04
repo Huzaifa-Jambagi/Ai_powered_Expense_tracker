@@ -8,9 +8,7 @@ export default function ApiInterceptor() {
   useEffect(() => {
     const interceptorId = api.interceptors.request.use(
       async (config) => {
-        const token = await getToken();
-        console.log(token);
-        
+        const token = await getToken();        
 
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;

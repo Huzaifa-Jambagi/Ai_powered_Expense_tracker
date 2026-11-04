@@ -9,25 +9,31 @@ import { useEffect, useMemo, useState } from 'react';
 import { isSameMonth } from 'date-fns'
 import { getCategoryConfig } from '../../../constants/catogories';
 import { type Transaction } from '../../../apis/transactionApis';
+import HomeHeader from '../../../components/HomeScreen/HomeHeader';
+import BalanceCard from '../../../components/HomeScreen/BalanceCard';
+import QuickActions from '../../../components/HomeScreen/QuickActions';
+import AIPromptBar from '../../../components/HomeScreen/AiPromptBar';
+import ExpenseBreakdown from '../../../components/HomeScreen/ExpenseBreakdown';
+import RecentTransactions from '../../../components/HomeScreen/RecentTransactions';
 
 export const QUICK_ACTIONS = [
     {
-        icon: "camera",
-        label: "AI Receipt Scan",
+        icon: "maximize",
+        label: "AI Receipt\nScan",
         action: "scan",
-        color: "#1A85FF",
+        color: "#D81B60",
     },
     {
         icon: "mic",
-        label: "Voice Entry",
+        label: "Voice\nEntry",
         action: "voice",
-        color: "#FF6B4A"
+        color: "#D81B60",
     },
     {
         icon: "plus",
-        label: "Add Manually",
+        label: "Add\nManually",
         action: "manual",
-        color: "#3DDC84"
+        color: "#D81B60",
     },
 ] as const;
 
@@ -36,6 +42,7 @@ const HomeScreen = () => {
 
     const currency = user?.currency;
     const firstName = user?.firstName;
+    const currencySymbol = user?.currency_symbol;
     const [budgetModalOpen, setBudgetModalOpen] = useState(false);
 
     const {
@@ -59,11 +66,11 @@ const HomeScreen = () => {
     const loading = accountsLoading || transactionsLoading
     const refreshing = accountsRefetching || transactionsRefetching
 
-    useEffect(() => {
-        console.log("Accounts:", accounts);
-        console.log("Transactions:", transactions);
-        console.log("Budget:", budget);
-    }, [accounts, transactions, budget]);
+    // useEffect(() => {
+    //     console.log("Accounts:", accounts);
+    //     console.log("Transactions:", transactions);
+    //     console.log("Budget:", budget);
+    // }, [accounts, transactions, budget]);
 
     const onRefresh = async () => {
         await Promise.all([
@@ -123,16 +130,30 @@ const HomeScreen = () => {
             }));
     }, [monthTransactions]);
 
+
     return (
         <SafeAreaView className="flex-1 bg-brand-bg" edges={["top"]}>
             <ScrollView
-                className="flex-1 bg-brand-body"
+                className="flex-1 bg-[#F8F8F7]"
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-
+                <HomeHeader />
+                <BalanceCard
+                    totalBalance={totalBalance}
+                    currencySymbol={currencySymbol ?? ""}
+                    monthIncome={monthIncome}
+                    monthExpense={monthExpense}
+                />
+                <QuickActions actions={QUICK_ACTIONS} />
+                <AIPromptBar />
+                <ExpenseBreakdown data={expenseBreakdown} />
+                <RecentTransactions
+                    transactions={recentTransactions}
+                    currencySymbol={currencySymbol}
+                />
             </ScrollView>
         </SafeAreaView>
     )

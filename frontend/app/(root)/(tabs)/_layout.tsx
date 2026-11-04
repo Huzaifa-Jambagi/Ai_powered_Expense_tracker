@@ -3,6 +3,7 @@ import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { Platform } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const useNativeTabs = Platform.OS === "ios";
 
@@ -11,14 +12,14 @@ export default function TabLayout() {
     return (
       <NativeTabs
         backgroundColor="#0B0E14"
-        tintColor="#4A9EFF"
+        tintColor="#C2185B"
         iconColor={{
           default: "#5C5F68",
-          selected: "#4A9EFF",
+          selected: "#C2185B",
         }}
         labelStyle={{
           default: { color: "#5C5F68" },
-          selected: { color: "#4A9EFF" },
+          selected: { color: "#C2185B" },
         }}
       >
         <NativeTabs.Trigger name="index">
@@ -55,7 +56,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#4A9EFF",
+        tabBarActiveTintColor: "#C2185B",
         tabBarInactiveTintColor: "#5C5F68",
         tabBarStyle: {
           backgroundColor: "#FFFFFF",
@@ -80,7 +81,7 @@ export default function TabLayout() {
         options={{
           title: "Transactions",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="list" size={size} color={color} />
+            <Feather name="file-text" size={size} color={color} />
           ),
         }}
       />
@@ -100,7 +101,7 @@ export default function TabLayout() {
         options={{
           title: "Assistant",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="cpu" size={size} color={color} />
+            <Feather name="zap" size={size} color={color} />
           ),
         }}
       />
@@ -110,10 +111,10 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="user" size={size} color={color} />
-          ),
+            <Feather name="user" size={size} color={color} />),
         }}
       />
     </Tabs>
   );
 }
+
