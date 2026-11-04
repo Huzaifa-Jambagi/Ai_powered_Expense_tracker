@@ -9,6 +9,7 @@ export const useTransactionsQuery = (filters: TransactionFilters = {}) => {
     return useQuery({
         queryKey: queryKeys.transactions(user?.id, filters),
         queryFn: () => getTransactionsApi(filters),
+        staleTime: 30 * 1000,
         enabled: !!user?.id,
     });
 };

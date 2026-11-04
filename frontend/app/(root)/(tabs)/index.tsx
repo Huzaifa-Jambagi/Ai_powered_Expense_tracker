@@ -5,7 +5,7 @@ import { userStorage } from '../../../lib/store';
 import { useTransactionsQuery } from '../../../hooks/useTransactionsQuery';
 import { useBudgetQuery } from '../../../hooks/useBudgetQuery';
 import { useAccountsQuery } from '../../../hooks/useAccounts';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from "react";
 import { isSameMonth } from 'date-fns'
 import { getCategoryConfig } from '../../../constants/catogories';
 import { type Transaction } from '../../../apis/transactionApis';
@@ -44,6 +44,8 @@ const HomeScreen = () => {
     const firstName = user?.firstName;
     const currencySymbol = user?.currency_symbol;
     const [budgetModalOpen, setBudgetModalOpen] = useState(false);
+    const isRefreshing = useRef(false);
+    const lastRefresh = useRef(0);
 
     const {
         data: accounts = [],
@@ -70,15 +72,28 @@ const HomeScreen = () => {
     //     console.log("Accounts:", accounts);
     //     console.log("Transactions:", transactions);
     //     console.log("Budget:", budget);
-    // }, [accounts, transactions, budget]);
+    // }, [accounts, transactions, budget]);;
 
-    const onRefresh = async () => {
+const onRefresh = async () => {
+    const now = Date.now();
+
+    if (isRefreshing.current || now - lastRefresh.current < 10000) {
+        return;
+    }
+
+    isRefreshing.current = true;
+    lastRefresh.current = now;
+
+    try {
         await Promise.all([
             refetchAccounts(),
             refetchTransactions(),
             refetchBudget(),
         ]);
-    };
+    } finally {
+        isRefreshing.current = false;
+    }
+};
 
     const totalBalance = useMemo(
         () => accounts.reduce((sum, account) => sum + Number(account.balance), 0),

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "../lib/query/queryKeys";
 import { useUser } from "@clerk/expo";
-import { getBudget,setBudget } from "../apis/budgetApis";
+import { getBudget, setBudget } from "../apis/budgetApis";
 
 export const useBudgetQuery = () => {
 
@@ -10,6 +10,7 @@ export const useBudgetQuery = () => {
     return useQuery({
         queryKey: queryKeys.budget(user?.id),
         queryFn: getBudget,
+        staleTime: 30 * 1000,
         enabled: !!user?.id
     })
 
