@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { format } from "date-fns";
 import { type Transaction } from "../../apis/transactionApis";
 import { getCategoryConfig } from "../../constants/catogories";
 
 type TransactionItemProps = {
     transaction: Transaction;
     currencySymbol?: string;
+    isBalanceVisible: boolean;
 };
 
 const formatAmount = (amount: number, symbol: string) =>
@@ -17,6 +17,7 @@ const formatAmount = (amount: number, symbol: string) =>
 export default function TransactionItem({
     transaction,
     currencySymbol = "₹",
+    isBalanceVisible,
 }: TransactionItemProps) {
     const isIncome = transaction.type === "INCOME";
     const category = getCategoryConfig(transaction.category);
@@ -25,10 +26,7 @@ export default function TransactionItem({
     const backgroundColor = isIncome ? "#E8F7E9" : "#FCE7EF";
 
     return (
-        <View
-            className="flex-row items-center rounded-[22px] border border-gray-100 bg-white p-4"
-           
-        >
+        <View className="flex-row items-center rounded-[22px] border border-gray-100 bg-white p-4">
             {/* Category icon */}
             <View
                 className="mr-4 h-[66px] w-[66px] items-center justify-center rounded-[22px]"
@@ -68,8 +66,9 @@ export default function TransactionItem({
                 className="ml-2 text-[17px] font-bold"
                 style={{ color }}
             >
-                {isIncome ? "+" : "-"}
-                {formatAmount(Number(transaction.amount), currencySymbol)}
+                {isBalanceVisible
+                    ? `${isIncome ? "+" : "-"}${formatAmount(Number(transaction.amount), currencySymbol)}`
+                    : "••••••"}
             </Text>
         </View>
     );

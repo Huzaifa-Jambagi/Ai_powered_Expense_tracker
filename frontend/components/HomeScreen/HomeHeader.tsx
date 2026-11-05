@@ -6,13 +6,13 @@ import { userStorage } from "../../lib/store";
 import Logo from "../../assets/Logo.svg";
 
 type HomeHeaderProps = {
-    totalBalance?: number;
-    currencySymbol?: string;
+    isBalanceVisible: boolean;
+    onToggleVisibility: () => void;
 };
 
 export default function HomeHeader({
-    totalBalance = 0,
-    currencySymbol = "",
+    isBalanceVisible,
+    onToggleVisibility,
 }: HomeHeaderProps) {
     const router = useRouter();
     const user = userStorage.getUser();
@@ -20,8 +20,6 @@ export default function HomeHeader({
     const greeting = user?.firstName
         ? `Hello, ${user.firstName}`
         : "Hello";
-
-    const balance = Number(totalBalance) || 0;
 
     return (
         <View className="mx-5 mt-6">
@@ -31,18 +29,17 @@ export default function HomeHeader({
                 </View>
 
                 <View className="flex-row items-center gap-3">
-                    <View className="items-end">
-                        <Text className="text-[13px] text-gray-500">
-                            Total Balance
-                        </Text>
-                        <Text className="mt-0.5 text-lg font-bold text-[#1A1D26]">
-                            {balance < 0 ? "-" : ""}
-                            {currencySymbol}
-                            {Math.abs(balance).toLocaleString("en-IN", {
-                                maximumFractionDigits: 2,
-                            })}
-                        </Text>
-                    </View>
+                    <Pressable
+                        onPress={onToggleVisibility}
+                        hitSlop={10}
+                        className="h-11 w-11 items-center justify-center rounded-full bg-white border border-gray-200"
+                    >
+                        <Feather
+                            name={isBalanceVisible ? "eye" : "eye-off"}
+                            size={20}
+                            color="#1A1D26"
+                        />
+                    </Pressable>
 
                     <Pressable
                         onPress={() => router.push("/profile")}
@@ -62,7 +59,7 @@ export default function HomeHeader({
             </View>
 
             <Text className="-mb-4 mt-1 text-xl font-bold text-gray-700">
-                {greeting},
+                {greeting}
             </Text>
         </View>
     );

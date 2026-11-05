@@ -5,12 +5,14 @@ import TransactionItem from "./TransactionItem";
 
 type RecentTransactionsProps = {
     transactions: Transaction[];
-    currencySymbol?: string;
+    currencySymbol: string;
+    isBalanceVisible: boolean;
 };
 
 export default function RecentTransactions({
     transactions,
     currencySymbol = "₹",
+    isBalanceVisible,
 }: RecentTransactionsProps) {
     return (
         <View className="mx-4 mt-5 mb-5">
@@ -37,6 +39,7 @@ export default function RecentTransactions({
                             key={transaction.id}
                             transaction={transaction}
                             currencySymbol={currencySymbol}
+                            isBalanceVisible={isBalanceVisible}
                         />
                     ))}
                 </View>

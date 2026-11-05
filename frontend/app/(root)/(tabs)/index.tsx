@@ -15,6 +15,7 @@ import QuickActions from '../../../components/HomeScreen/QuickActions';
 import AIPromptBar from '../../../components/HomeScreen/AiPromptBar';
 import ExpenseBreakdown from '../../../components/HomeScreen/ExpenseBreakdown';
 import RecentTransactions from '../../../components/HomeScreen/RecentTransactions';
+import MonthlyOverview from '../../../components/HomeScreen/MonthlyOverview';
 
 export const QUICK_ACTIONS = [
     {
@@ -37,13 +38,17 @@ export const QUICK_ACTIONS = [
     },
 ] as const;
 
+
+
+
 const HomeScreen = () => {
     const user = userStorage.getUser();
 
     const currency = user?.currency;
     const firstName = user?.firstName;
-    const currencySymbol = user?.currency_symbol;
+    const currencySymbol = user?.currency_symbol ?? "₹";
     const [budgetModalOpen, setBudgetModalOpen] = useState(false);
+    const [isBalanceVisible, setIsBalanceVisible] = useState(true);
     const isRefreshing = useRef(false);
     const lastRefresh = useRef(0);
 
@@ -74,26 +79,26 @@ const HomeScreen = () => {
     //     console.log("Budget:", budget);
     // }, [accounts, transactions, budget]);;
 
-const onRefresh = async () => {
-    const now = Date.now();
+    const onRefresh = async () => {
+        const now = Date.now();
 
-    if (isRefreshing.current || now - lastRefresh.current < 10000) {
-        return;
-    }
+        if (isRefreshing.current || now - lastRefresh.current < 10000) {
+            return;
+        }
 
-    isRefreshing.current = true;
-    lastRefresh.current = now;
+        isRefreshing.current = true;
+        lastRefresh.current = now;
 
-    try {
-        await Promise.all([
-            refetchAccounts(),
-            refetchTransactions(),
-            refetchBudget(),
-        ]);
-    } finally {
-        isRefreshing.current = false;
-    }
-};
+        try {
+            await Promise.all([
+                refetchAccounts(),
+                refetchTransactions(),
+                refetchBudget(),
+            ]);
+        } finally {
+            isRefreshing.current = false;
+        }
+    };
 
     const totalBalance = useMemo(
         () => accounts.reduce((sum, account) => sum + Number(account.balance), 0),
@@ -155,19 +160,35 @@ const onRefresh = async () => {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-                <HomeHeader />
+                <HomeHeader
+                    isBalanceVisible={isBalanceVisible}
+                    onToggleVisibility={() => setIsBalanceVisible(prev => !prev)}
+                />
                 <BalanceCard
                     totalBalance={totalBalance}
-                    currencySymbol={currencySymbol ?? ""}
-                    monthIncome={monthIncome}
+                    currencySymbol={currencySymbol}
+                    budget={budget}
                     monthExpense={monthExpense}
+                    isBalanceVisible={isBalanceVisible}
+                />
+
+                <MonthlyOverview
+                    income={monthIncome}
+                    expense={monthExpense}
+                    currencySymbol={currencySymbol}
+                    isBalanceVisible={isBalanceVisible}
                 />
                 <QuickActions actions={QUICK_ACTIONS} />
                 <AIPromptBar />
-                <ExpenseBreakdown data={expenseBreakdown} />
+                <ExpenseBreakdown
+                    data={expenseBreakdown}
+                    currencySymbol={currencySymbol}
+                    isBalanceVisible={isBalanceVisible}
+                />
                 <RecentTransactions
                     transactions={recentTransactions}
                     currencySymbol={currencySymbol}
+                    isBalanceVisible={isBalanceVisible}
                 />
             </ScrollView>
         </SafeAreaView>

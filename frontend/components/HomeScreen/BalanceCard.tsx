@@ -1,23 +1,31 @@
 import { Text, View } from "react-native";
 import BalanceBackground from "../../assets/images/total_balance_bg.svg";
+import type { Budget } from "../../apis/budgetApis";
 
 type BalanceCardProps = {
     totalBalance: number;
     currencySymbol: string;
-    monthIncome: number;
+    budget: Budget | null;
     monthExpense: number;
+    isBalanceVisible: boolean;
 };
 
 export default function BalanceCard({
     totalBalance,
     currencySymbol,
-    monthIncome,
+    budget,
     monthExpense,
+    isBalanceVisible,
 }: BalanceCardProps) {
     const formatAmount = (amount: number) =>
-        `${currencySymbol}${Math.abs(amount).toLocaleString(undefined, {
+        `${currencySymbol}${Math.abs(amount).toLocaleString("en-IN", {
             maximumFractionDigits: 2,
         })}`;
+
+    const budgetAmount = Number(budget?.amount ?? 0);
+    const spent = Number(monthExpense);
+
+    const progress = budgetAmount > 0 ? Math.min((spent / budgetAmount) * 100, 100) : 0;
 
     return (
         <View className="relative mx-4 h-[265px] overflow-hidden rounded-[30px]">
@@ -35,21 +43,46 @@ export default function BalanceCard({
                     numberOfLines={1}
                     adjustsFontSizeToFit
                 >
-                    {`${totalBalance < 0 ? "-" : ""}${formatAmount(totalBalance)}`}
+                    {isBalanceVisible
+                        ? `${totalBalance < 0 ? "-" : ""}${formatAmount(totalBalance)}`
+                        : "••••••••"}
                 </Text>
 
-                <View className="mt-4 flex-row items-center gap-2.5">
-                    <View className="rounded-full bg-green-800/70 px-4 py-2">
-                        <Text className="text-sm font-semibold text-green-300">
-                            ↑ {formatAmount(monthIncome)}
+                <View className="mt-6 w-full">
+                    <View className="mb-2 flex-row items-center justify-between">
+                        <Text className="text-sm font-medium text-white/80">
+                            Monthly Budget
                         </Text>
+
+                        {budget ? (
+                            <Text className="text-sm font-semibold text-white">
+                                {isBalanceVisible
+                                    ? `${formatAmount(spent)} / ${formatAmount(budgetAmount)}`
+                                    : "•••••• / ••••••"}
+                            </Text>
+                        ) : (
+                            <Text className="text-sm font-medium text-white/80">
+                                No budget set
+                            </Text>
+                        )}
                     </View>
 
-                    <View className="rounded-full bg-red-900/70 px-4 py-2">
-                        <Text className="text-sm font-semibold text-red-300">
-                            ↓ {formatAmount(monthExpense)}
-                        </Text>
-                    </View>
+                    {budget && (
+                        <>
+                            <View className="h-2 overflow-hidden rounded-full bg-white/25">
+                                <View
+                                    className="h-full rounded-full bg-white"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </View>
+
+                            <Text className="mt-2 text-xs font-medium text-white/70">
+                                {isBalanceVisible
+                                    ? `${Math.round(progress)}% of budget used`
+                                    : "••% of budget used"}
+                            </Text>
+                        </>
+                    )}
                 </View>
             </View>
         </View>

@@ -4,7 +4,6 @@ import { PieChart } from "react-native-gifted-charts";
 import { Transaction } from "../../apis/transactionApis";
 import { getCategoryConfig } from "../../constants/catogories";
 
-
 export type ExpenseBreakdownProps = {
     data: {
         category: Transaction["category"];
@@ -12,6 +11,7 @@ export type ExpenseBreakdownProps = {
         color: string;
     }[];
     currencySymbol?: string;
+    isBalanceVisible: boolean;
 };
 
 const formatAmount = (amount: number, symbol: string) =>
@@ -22,6 +22,7 @@ const formatAmount = (amount: number, symbol: string) =>
 function ExpenseBreakdown({
     data,
     currencySymbol = "₹",
+    isBalanceVisible,
 }: ExpenseBreakdownProps) {
     const total = useMemo(
         () => data.reduce((sum, item) => sum + item.amount, 0),
@@ -47,7 +48,6 @@ function ExpenseBreakdown({
         [data, total]
     );
 
-
     return (
         <View className="mx-4 mt-4 rounded-[20px] border border-gray-200/70 bg-white p-4">
             <Text className="mb-4 ml-2 mt-1 text-[15px] font-semibold text-gray-900">
@@ -66,7 +66,9 @@ function ExpenseBreakdown({
                             centerLabelComponent={() => (
                                 <View className="items-center">
                                     <Text className="text-[13px] font-bold text-gray-900">
-                                        {formatAmount(total, currencySymbol)}
+                                        {isBalanceVisible
+                                            ? formatAmount(total, currencySymbol)
+                                            : "••••••"}
                                     </Text>
                                     <Text className="text-[10px] text-gray-500">
                                         Total Expense
