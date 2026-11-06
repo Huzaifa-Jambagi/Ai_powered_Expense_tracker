@@ -3,7 +3,6 @@ import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { Platform } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const useNativeTabs = Platform.OS === "ios";
 
@@ -28,9 +27,7 @@ export default function TabLayout() {
         </NativeTabs.Trigger>
 
         <NativeTabs.Trigger name="transactions">
-          <NativeTabs.Trigger.Label>
-            Transactions
-          </NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Label>Transactions</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon sf="list.bullet" />
         </NativeTabs.Trigger>
 
@@ -39,9 +36,9 @@ export default function TabLayout() {
           <NativeTabs.Trigger.Icon sf="plus.circle.fill" />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="assistant">
-          <NativeTabs.Trigger.Label>Assistant</NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Icon sf="brain.head.profile" />
+        <NativeTabs.Trigger name="budgets">
+          <NativeTabs.Trigger.Label>Budgets</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Icon sf="chart.pie.fill" />
         </NativeTabs.Trigger>
 
         <NativeTabs.Trigger name="profile">
@@ -97,11 +94,11 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="assistant"
+        name="budgets"
         options={{
-          title: "Assistant",
+          title: "Budgets",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="zap" size={size} color={color} />
+            <Feather name="pie-chart" size={size} color={color} />
           ),
         }}
       />
@@ -111,10 +108,10 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="user" size={size} color={color} />),
+            <Feather name="user" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>
   );
 }
-

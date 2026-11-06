@@ -23,7 +23,10 @@ export const transactions = pgTable("transactions", {
 
     description: varchar("description", { length: 255 }),
 
-    date: timestamp("date").notNull(),
+    date: timestamp("date", {
+        withTimezone: true,
+        mode: "date",
+    }).notNull(),
 
     user_id: varchar("user_id")
         .notNull()
@@ -46,4 +49,9 @@ export const transactions = pgTable("transactions", {
     index("transactions_user_id_idx").on(table.user_id),
     index("transactions_account_id_idx").on(table.account_id),
     index("transactions_user_type_idx").on(table.user_id, table.type),
+    index("transactions_user_type_date_idx").on(
+        table.user_id,
+        table.type,
+        table.date
+    ),
 ]);

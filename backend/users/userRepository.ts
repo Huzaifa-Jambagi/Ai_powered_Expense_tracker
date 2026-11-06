@@ -24,7 +24,7 @@ export const completeOnboarding = async (clerkId: string, startingBalance: numbe
     const [account] = await tx
       .insert(accounts)
       .values({
-        balance: startingBalance.toString(),
+        balance: startingBalance,
         is_default: true,
         user_id: clerkId,
       })

@@ -45,7 +45,7 @@ export default function SignInScreen() {
   });
 
 
-  const { refetch } = useUser();
+  const { refetch } = useUser(true);
 
   const navigateUser = async () => {    
     try {

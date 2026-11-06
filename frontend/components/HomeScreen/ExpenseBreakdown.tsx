@@ -51,7 +51,7 @@ function ExpenseBreakdown({
     return (
         <View className="mx-4 mt-4 rounded-[20px] border border-gray-200/70 bg-white p-4">
             <Text className="mb-4 ml-2 mt-1 text-[15px] font-semibold text-gray-900">
-                Expense Breakdown
+                Expense Breakdown(This Month)
             </Text>
 
             {data.length > 0 && total > 0 ? (

@@ -1,11 +1,10 @@
 import { Text, View } from "react-native";
 import BalanceBackground from "../../assets/images/total_balance_bg.svg";
-import type { Budget } from "../../apis/budgetApis";
 
 type BalanceCardProps = {
     totalBalance: number;
     currencySymbol: string;
-    budget: Budget | null;
+    budget: number;
     monthExpense: number;
     isBalanceVisible: boolean;
 };
@@ -22,7 +21,7 @@ export default function BalanceCard({
             maximumFractionDigits: 2,
         })}`;
 
-    const budgetAmount = Number(budget?.amount ?? 0);
+    const budgetAmount = budget;
     const spent = Number(monthExpense);
 
     const progress = budgetAmount > 0 ? Math.min((spent / budgetAmount) * 100, 100) : 0;
@@ -54,7 +53,7 @@ export default function BalanceCard({
                             Monthly Budget
                         </Text>
 
-                        {budget ? (
+                        {budget > 0 ? (
                             <Text className="text-sm font-semibold text-white">
                                 {isBalanceVisible
                                     ? `${formatAmount(spent)} / ${formatAmount(budgetAmount)}`
@@ -67,7 +66,7 @@ export default function BalanceCard({
                         )}
                     </View>
 
-                    {budget && (
+                    {budget > 0 && (
                         <>
                             <View className="h-2 overflow-hidden rounded-full bg-white/25">
                                 <View

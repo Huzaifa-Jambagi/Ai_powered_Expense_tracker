@@ -1,4 +1,5 @@
-import { Slot, Redirect } from "expo-router";
+
+import { Stack, Redirect } from "expo-router";
 import { useAuth } from "@clerk/expo";
 import { useEffect } from "react";
 
@@ -28,5 +29,11 @@ export default function RootGroupLayout() {
     return <Redirect href="/(onboarding)/onboarding" />;
   }
 
-  return <Slot />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="assistant" />
+    </Stack>
+  );
 }

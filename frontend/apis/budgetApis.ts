@@ -3,22 +3,36 @@ import { api } from "./api";
 export type Budget = {
     id: string;
     user_id: string;
+    category: string;
     amount: number;
     last_alert_sent: string | null;
+    last_alert_threshold: number | null;
     created_at: string;
     updated_at: string;
+    spent: number;
+    remaining: number;
+    percentage: number;
 };
 
-export const getBudget = async (): Promise<Budget | null> => {
+export type GetBudgetResponse = {
+    success: boolean;
+    data: Budget[];
+    message: string;
+};
 
-    const { data } = await api.get<Budget | null>("api/vi/budgets/get");
-        console.log("budget fetched",data)
-    return data;
-}
+export const getBudget = async (): Promise<GetBudgetResponse> => {
+    const now = new Date();
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-export const setBudget = async (amount: number): Promise<Budget> => {
+    const response = await api.get(`/budgets/get-budget/${date}`);
+    return response.data;
+};
 
-    const { data } = await api.put<Budget>("api/vi/budgets/set", { amount });
+export const setBudgetApi = async (category: string, amount: number) => {
+    const response = await api.post("/budgets/set-budget", {
+        category,
+        amount,
+    });
 
-    return data;
-}
+    return response.data;
+};

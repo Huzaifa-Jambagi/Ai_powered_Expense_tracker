@@ -14,7 +14,7 @@ export default function AIPromptBar() {
 
     return (
         <Pressable
-            onPress={() => router.push("/(root)/(tabs)/assistant")}
+            onPress={() => router.push("/assistant")}
             className="mx-5 mt-[18px] flex-row items-center gap-2.5 rounded-[18px] border border-[#E8E6DF] bg-white p-3.5"
         >
             <View className="h-[26px] w-[26px] items-center justify-center rounded-full">

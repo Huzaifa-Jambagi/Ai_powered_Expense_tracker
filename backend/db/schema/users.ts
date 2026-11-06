@@ -20,6 +20,4 @@ export const users = pgTable("users", {
 
     onboarding_completed: p.boolean("onboarding_completed").notNull().default(false),
     
-}, (table) => [
-    index("users_clerk_id_idx").on(table.clerk_id)
-]);
+});

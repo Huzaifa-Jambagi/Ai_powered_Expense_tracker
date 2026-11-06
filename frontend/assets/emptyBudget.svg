@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="320" viewBox="0 0 420 320" fill="none">
+  <defs>
+    <linearGradient id="wallet" x1="112" y1="165" x2="302" y2="263" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9A6038"/><stop offset="1" stop-color="#704326"/>
+    </linearGradient>
+    <linearGradient id="flap" x1="145" y1="190" x2="300" y2="240" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B77B4C"/><stop offset="1" stop-color="#89552F"/>
+    </linearGradient>
+    <filter id="groundBlur" x="70" y="255" width="280" height="50" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  <path d="M210 38C265 38 322 78 329 137C336 193 288 246 220 252C151 258 89 222 83 162C77 103 137 38 210 38Z" fill="#E5F3EB"/>
+  <ellipse cx="210" cy="279" rx="105" ry="10" fill="#4C3A2C" opacity=".18" filter="url(#groundBlur)"/>
+  <!-- Plain receipt: no green border or decorative marks -->
+  <rect x="151" y="66" width="116" height="132" rx="17" fill="#FAFBF9" stroke="#DDE2DD" stroke-width="2"/>
+  <rect x="177" y="139" width="17" height="31" rx="2" fill="#B8C7BD"/>
+  <rect x="203" y="119" width="17" height="51" rx="2" fill="#B8C7BD"/>
+  <rect x="229" y="129" width="17" height="41" rx="2" fill="#B8C7BD"/>
+  <!-- Brown wallet -->
+  <path d="M112 163C112 154.7 118.7 148 127 148H284C294.5 148 303 156.5 303 167V232C303 245.8 291.8 257 278 257H137C124.3 257 114 246.7 114 234L112 163Z" fill="url(#wallet)"/>
+  <path d="M112 177C112 168.7 118.7 162 127 162H287C295.8 162 303 169.2 303 178V231C303 245.4 291.4 257 277 257H137C124.3 257 114 246.7 114 234L112 177Z" fill="url(#flap)"/>
+  <path d="M114 180C114 170.1 122.1 162 132 162H286" stroke="#D1A17B" stroke-opacity=".35" stroke-width="2"/>
+  <rect x="258" y="191" width="38" height="31" rx="9" fill="#D8B28F"/>
+  <rect x="265" y="198" width="24" height="17" rx="7" fill="#A9784F"/>
+  <circle cx="277" cy="206.5" r="3" fill="#EAD7C4"/>
+</svg>

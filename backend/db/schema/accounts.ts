@@ -12,8 +12,9 @@ export const accounts = pgTable("accounts", {
 
   type: accountTypeEnum("type").notNull().default("BANK"),
 
-  balance: numeric("balance").notNull().default("0"),
-
+  balance: numeric("balance", { mode: "number" })
+    .notNull()
+    .default(0),
   is_default: boolean("is_default").notNull().default(false),
 
   created_at: timestamp("created_at").notNull().defaultNow(),

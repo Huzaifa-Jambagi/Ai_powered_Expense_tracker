@@ -66,9 +66,12 @@ const HomeScreen = () => {
         refetch: refetchTransactions,
     } = useTransactionsQuery();
 
-    const { data: budget = null,
-        refetch: refetchBudget
-    } = useBudgetQuery();
+
+
+    const { data: budgetResponse, refetch: refetchBudget } = useBudgetQuery();
+
+    const budgets = budgetResponse?.data ?? [];
+
 
     const loading = accountsLoading || transactionsLoading
     const refreshing = accountsRefetching || transactionsRefetching
@@ -150,6 +153,11 @@ const HomeScreen = () => {
             }));
     }, [monthTransactions]);
 
+   const totalBudget = useMemo(
+    () => budgets.reduce((sum, budget) => sum + Number(budget.amount), 0),
+    [budgets]
+);
+
 
     return (
         <SafeAreaView className="flex-1 bg-brand-bg" edges={["top"]}>
@@ -167,7 +175,7 @@ const HomeScreen = () => {
                 <BalanceCard
                     totalBalance={totalBalance}
                     currencySymbol={currencySymbol}
-                    budget={budget}
+                    budget={totalBudget}
                     monthExpense={monthExpense}
                     isBalanceVisible={isBalanceVisible}
                 />
