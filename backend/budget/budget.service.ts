@@ -2,7 +2,6 @@ import { getMonthDateRange } from "../date.js";
 import * as budgetRepository from "./budget.repository.js";
 import type { BudgetCategory } from "./budget.validation.js";
 
-
 export const getBudget = async (clerkId: string, month: string, timezone: string) => {
     const { startDate, endDate } = getMonthDateRange(month, timezone);
 
@@ -12,15 +11,11 @@ export const getBudget = async (clerkId: string, month: string, timezone: string
     ]);
 
     const expensesByCategory = new Map(
-        expenses.map((expense) => [expense.category, expense.spent])
+        expenses.map(({ category, spent }) => [category, spent])
     );
 
-    const totalSpent = expenses.reduce((total, expense) => total + expense.spent, 0);
-
     return budgets.map((budget) => {
-        const spent = budget.category === "overall"
-            ? totalSpent
-            : expensesByCategory.get(budget.category) ?? 0;
+        const spent = expensesByCategory.get(budget.category) ?? 0;
 
         return {
             ...budget,
@@ -30,7 +25,6 @@ export const getBudget = async (clerkId: string, month: string, timezone: string
         };
     });
 };
-
 
 export const setBudget = async (clerkId: string, category: BudgetCategory, amount: number) => {
     return await budgetRepository.setBudget(clerkId, category, amount);

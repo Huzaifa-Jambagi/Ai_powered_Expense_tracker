@@ -90,13 +90,6 @@ export const CATEGORIES = {
     color: "#BDC3C7",
     type: "EXPENSE",
   },
-  overall: {
-    label: "Overall",
-    icon: "📦",
-    color: "#BDC3C7",
-    type: "EXPENSE",
-  },
-
   // ── INCOME (6) ────────────────────────────────────────────
   salary: {
     label: "Salary",

@@ -24,12 +24,12 @@ export const getBudget = async (): Promise<GetBudgetResponse> => {
     const now = new Date();
     const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-    const response = await api.get(`/budgets/get-budget/${date}`);
+    const response = await api.get(`/api/v1/budgets/get-budget/${date}`);
     return response.data;
 };
 
-export const setBudgetApi = async (category: string, amount: number) => {
-    const response = await api.post("/budgets/set-budget", {
+export const setBudget = async (category: string, amount: number) => {
+    const response = await api.post("/api/v1/budgets/set-budget", {
         category,
         amount,
     });

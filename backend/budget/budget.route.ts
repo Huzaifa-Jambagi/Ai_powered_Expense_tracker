@@ -4,7 +4,7 @@ import { getBudget, setBudget } from "./budget.controller.js";
 
 const router = Router();
 
-router.get("/get-budget/:date", auth, getBudget);
+router.get("/get-budget/:month", auth, getBudget);
 router.post("/set-budget", auth, setBudget);
 
 export default router;
