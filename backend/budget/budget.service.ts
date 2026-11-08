@@ -29,3 +29,7 @@ export const getBudget = async (clerkId: string, month: string, timezone: string
 export const setBudget = async (clerkId: string, category: BudgetCategory, amount: number) => {
     return await budgetRepository.setBudget(clerkId, category, amount);
 };
+
+export const deleteBudget = async (clerkId: string, id: string) => {
+    return await budgetRepository.deleteBudget(clerkId, id);
+};

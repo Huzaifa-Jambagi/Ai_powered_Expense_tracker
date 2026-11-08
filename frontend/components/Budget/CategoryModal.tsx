@@ -5,6 +5,8 @@ import { EXPENSE_CATEGORIES, type CategoryKey } from "../../constants/catogories
 type CategoryModalProps = {
     visible: boolean;
     selectedCategory: CategoryKey | null;
+    existingCategories: string[];
+    editableCategory?: string;
     onSelect: (category: CategoryKey) => void;
     onClose: () => void;
 };
@@ -12,10 +14,13 @@ type CategoryModalProps = {
 export default function CategoryModal({
     visible,
     selectedCategory,
+    existingCategories,
+    editableCategory,
     onSelect,
     onClose,
 }: CategoryModalProps) {
     return (
+
         <Modal
             visible={visible}
             transparent
@@ -46,19 +51,26 @@ export default function CategoryModal({
                         {EXPENSE_CATEGORIES.map((category) => {
                             const isSelected = selectedCategory === category.key;
 
+                            const isDisabled =
+                                existingCategories.includes(category.key) &&
+                                category.key !== editableCategory;
                             return (
                                 <Pressable
                                     key={category.key}
+                                    disabled={isDisabled}
                                     onPress={() => {
                                         onSelect(category.key);
                                         onClose();
                                     }}
                                     accessibilityRole="radio"
-                                    accessibilityState={{ checked: isSelected }}
+                                    accessibilityState={{
+                                        checked: isSelected,
+                                        disabled: isDisabled,
+                                    }}
                                     className={`h-16 flex-row items-center rounded-2xl border px-4 ${isSelected
-                                            ? "border-[#00834F] bg-[#F0FAF5]"
-                                            : "border-[#E8E9EC] bg-white"
-                                        }`}
+                                        ? "border-[#00834F] bg-[#F0FAF5]"
+                                        : "border-[#E8E9EC] bg-white"
+                                        } ${isDisabled ? "opacity-40" : ""}`}
                                 >
                                     <View
                                         className="h-11 w-11 items-center justify-center rounded-full"
@@ -75,16 +87,22 @@ export default function CategoryModal({
                                         {category.label}
                                     </Text>
 
-                                    <View
-                                        className={`h-7 w-7 items-center justify-center rounded-full ${isSelected
-                                                ? "bg-[#00834F]"
-                                                : "border-2 border-[#B8BBC2]"
-                                            }`}
-                                    >
-                                        {isSelected && (
-                                            <Feather name="check" size={17} color="white" />
-                                        )}
-                                    </View>
+                                    {isDisabled ? (
+                                        <Text className="text-xs font-medium text-[#8A8D96]">
+                                            Already added
+                                        </Text>
+                                    ) : (
+                                        <View
+                                            className={`h-7 w-7 items-center justify-center rounded-full ${isSelected
+                                                    ? "bg-[#00834F]"
+                                                    : "border-2 border-[#B8BBC2]"
+                                                }`}
+                                        >
+                                            {isSelected && (
+                                                <Feather name="check" size={17} color="white" />
+                                            )}
+                                        </View>
+                                    )}
                                 </Pressable>
                             );
                         })}

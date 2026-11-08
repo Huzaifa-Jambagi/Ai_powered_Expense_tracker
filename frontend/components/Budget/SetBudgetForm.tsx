@@ -6,6 +6,7 @@ import {
     Text,
     TextInput,
     Pressable,
+    Alert
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { EXPENSE_CATEGORIES } from "../../constants/catogories";
@@ -21,6 +22,9 @@ type SetBudgetFormProps = {
     isPending: boolean;
     initialCategory?: string;
     initialAmount?: string;
+    existingCategories: string[];
+    editableCategory?: string;
+    onDelete?: () => void;
     onSubmit: (values: BudgetFormValues) => void;
 };
 
@@ -29,7 +33,10 @@ export default function SetBudgetForm({
     isPending,
     initialCategory = "",
     initialAmount = "",
+    existingCategories,
+    editableCategory,
     onSubmit,
+    onDelete,
 }: SetBudgetFormProps) {
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
@@ -53,6 +60,21 @@ export default function SetBudgetForm({
             amount: initialAmount,
         });
     }, [initialCategory, initialAmount, reset]);
+
+    const confirmDelete = () => {
+        Alert.alert(
+            "Delete Budget",
+            "Are you sure you want to delete this budget? This action cannot be undone.",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: onDelete,
+                },
+            ]
+        );
+    };
 
     return (
         <View className="gap-5">
@@ -100,11 +122,10 @@ export default function SetBudgetForm({
                                         )}
 
                                         <Text
-                                            className={`text-sm font-medium ${
-                                                selected
-                                                    ? "text-[#111B3A]"
-                                                    : "text-[#8A8D96]"
-                                            }`}
+                                            className={`text-sm font-medium ${selected
+                                                ? "text-[#111B3A]"
+                                                : "text-[#8A8D96]"
+                                                }`}
                                         >
                                             {selected?.label ?? "Select category"}
                                         </Text>
@@ -120,6 +141,8 @@ export default function SetBudgetForm({
                                 <CategoryModal
                                     visible={categoryModalOpen}
                                     selectedCategory={selected?.key ?? null}
+                                    existingCategories={existingCategories}
+                                    editableCategory={editableCategory}
                                     onSelect={onChange}
                                     onClose={() => setCategoryModalOpen(false)}
                                 />
@@ -177,15 +200,28 @@ export default function SetBudgetForm({
                 onPress={handleSubmit(onSubmit)}
                 disabled={isPending}
                 accessibilityRole="button"
-                className={`h-12 flex-row items-center justify-center gap-2 rounded-xl bg-[#006341] ${
-                    isPending ? "opacity-60" : ""
-                }`}
+                className={`h-12 flex-row items-center justify-center gap-2 rounded-xl bg-[#006341] ${isPending ? "opacity-60" : ""
+                    }`}
             >
                 <Feather name="check" size={18} color="white" />
                 <Text className="text-sm font-semibold text-white">
                     Save Budget
                 </Text>
             </Pressable>
+            {editableCategory && onDelete && (
+                <Pressable
+                    onPress={confirmDelete}
+                    disabled={isPending}
+                    accessibilityRole="button"
+                    className={`h-12 flex-row items-center justify-center gap-2 rounded-xl border border-red-200 bg-white ${isPending ? "opacity-60" : ""
+                        }`}
+                >
+                    <Feather name="trash-2" size={17} color="#DC2626" />
+                    <Text className="text-sm font-semibold text-red-600">
+                        Delete Budget
+                    </Text>
+                </Pressable>
+            )}
         </View>
     );
 }

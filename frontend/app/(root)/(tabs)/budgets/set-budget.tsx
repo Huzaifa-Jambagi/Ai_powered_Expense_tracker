@@ -6,7 +6,7 @@ import {
     KeyboardAvoidingView,
     Platform,
 } from "react-native";
-
+import { useBudgetQuery } from "../../../../hooks/useBudgetQuery";
 import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -20,10 +20,14 @@ import type { BudgetFormValues } from "../../../../components/Budget/Budget.sche
 import {
     useBudgetSavePending,
     useSetBudgetMutation,
+    useDeleteBudgetMutation,
 } from "../../../../hooks/useBudgetMutation";
 
 export default function SetBudget() {
     const router = useRouter();
+    const { data: budgetData } = useBudgetQuery();
+
+    const existingCategories = budgetData?.data.map((budget) => budget.category) ?? [];
 
     const { category, amount } = useLocalSearchParams<{
         category?: string;
@@ -47,16 +51,15 @@ export default function SetBudget() {
     const isEditing = Boolean(isValidCategory && isValidAmount);
 
     const handleSubmit = (values: BudgetFormValues) => {
-        if (isEditing) {
-            mutate(values);
-            router.back();
-            return;
-        }
-
-        mutate(values, {
-            onSuccess: () => router.back(),
-        });
+        mutate(values);
+        router.back();
     };
+
+    const { mutate: deleteMutate, isPending: isDeleting } = useDeleteBudgetMutation();
+
+    const budgetToDelete = isEditing
+        ? budgetData?.data.find((budget) => budget.category === category)
+        : undefined;
 
     return (
         <SafeAreaView className="flex-1 bg-[#F8F8F7]" edges={["top"]}>
@@ -104,10 +107,18 @@ export default function SetBudget() {
                     <View className="mt-10 flex-1">
                         <SetBudgetForm
                             currencySymbol={currencySymbol}
-                            isPending={isBudgetSaving}
+                            isPending={isBudgetSaving || isDeleting}
                             initialCategory={isEditing ? category! : ""}
                             initialAmount={isEditing ? amount! : ""}
+                            existingCategories={existingCategories}
+                            editableCategory={isEditing ? category : undefined}
                             onSubmit={handleSubmit}
+                            onDelete={() => {
+                                if (budgetToDelete) {
+                                    deleteMutate(budgetToDelete.id);
+                                    router.back();
+                                }
+                            }}
                         />
                     </View>
                 </ScrollView>

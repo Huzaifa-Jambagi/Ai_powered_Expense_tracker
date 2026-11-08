@@ -51,3 +51,17 @@ export const setBudget = async (clerkId: string, category: BudgetCategory, amoun
 
     return budget;
 };
+
+export const deleteBudget = async (clerkId: string, id: string) => {
+    const [deletedBudget] = await db
+        .delete(budgets)
+        .where(
+            and(
+                eq(budgets.id, id),
+                eq(budgets.user_id, clerkId)
+            )
+        )
+        .returning();
+
+    return deletedBudget;
+};

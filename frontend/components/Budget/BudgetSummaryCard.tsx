@@ -1,6 +1,6 @@
-
 import { memo } from "react";
 import { View, Text } from "react-native";
+import TotalBalanceBackground from "../../assets/images/total_balance_bg.svg";
 
 type BudgetSummaryCardProps = {
     budget: number;
@@ -13,17 +13,21 @@ const formatAmount = (amount: number, symbol: string) =>
         maximumFractionDigits: 2,
     })}`;
 
-function BudgetSummaryCard({
-    budget,
-    spent,
-    currencySymbol,
-}: BudgetSummaryCardProps) {
+function BudgetSummaryCard({ budget, spent, currencySymbol }: BudgetSummaryCardProps) {
     const remaining = budget - spent;
     const percentage = budget > 0 ? (spent / budget) * 100 : 0;
     const progress = Math.min(Math.max(percentage, 0), 100);
 
     return (
-        <View className="mx-4 overflow-hidden rounded-[24px] bg-[#005C3D] p-5">
+        <View className="mx-4 overflow-hidden rounded-[24px] p-5">
+            <View className="absolute inset-0" pointerEvents="none">
+                <TotalBalanceBackground
+                    width="100%"
+                    height="100%"
+                    preserveAspectRatio="none"
+                />
+            </View>
+
             <Text className="text-sm font-medium text-white/80">
                 Total Budget
             </Text>

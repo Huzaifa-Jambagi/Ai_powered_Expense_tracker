@@ -36,3 +36,8 @@ export const setBudget = async (category: string, amount: number) => {
 
     return response.data;
 };
+
+export const deleteBudget = async (id: string) => {
+    const response = await api.delete(`/api/v1/budgets/delete-budget/${id}`);
+    return response.data;
+};

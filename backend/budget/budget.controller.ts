@@ -3,6 +3,9 @@ import { getAuth } from "@clerk/express";
 import * as budgetService from "./budget.service.js";
 import { getBudgetSchema, setBudgetSchema } from "./budget.validation.js";
 
+const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
 export const getBudget = async (req: Request, res: Response) => {
     try {
         const { userId } = getAuth(req);
@@ -55,6 +58,7 @@ export const getBudget = async (req: Request, res: Response) => {
 export const setBudget = async (req: Request, res: Response) => {
     try {
         const { userId } = getAuth(req);
+        await delay(5000);
 
         const result = setBudgetSchema.safeParse(req.body);
 
@@ -76,6 +80,43 @@ export const setBudget = async (req: Request, res: Response) => {
         });
     } catch (error) {
         console.error("Error saving budget:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+};
+
+export const deleteBudget = async (req: Request, res: Response) => {
+    try {
+        const { userId } = getAuth(req);
+        const { id } = req.params;
+        await delay(5000);
+
+        if (typeof id !== "string") {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid budget ID",
+            });
+        }
+
+        const budget = await budgetService.deleteBudget(userId!, id);
+
+        if (!budget) {
+            return res.status(404).json({
+                success: false,
+                message: "Budget not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: budget,
+            message: "Budget deleted successfully",
+        });
+    } catch (error) {
+        console.error("Error deleting budget:", error);
 
         return res.status(500).json({
             success: false,

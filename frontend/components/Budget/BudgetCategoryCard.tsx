@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 import { View, Text, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
