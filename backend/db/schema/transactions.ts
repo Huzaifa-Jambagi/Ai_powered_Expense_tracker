@@ -1,6 +1,6 @@
-import { pgTable, uuid, varchar, numeric, timestamp, boolean, index, pgEnum } from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 import { accounts } from "./accounts.js";
+import { pgTable, uuid, varchar, numeric, timestamp, boolean, index, pgEnum, foreignKey } from "drizzle-orm/pg-core";
 
 export const transactionTypeEnum = pgEnum("transaction_type", [
     "INCOME",
@@ -11,14 +11,11 @@ export const transactionTypeEnum = pgEnum("transaction_type", [
 export const transactions = pgTable("transactions", {
     id: uuid("id").primaryKey().defaultRandom(),
 
-    account_id: uuid("account_id")
-        .notNull()
-        .references(() => accounts.id, { onDelete: "cascade" }),
+    account_id: uuid("account_id").notNull(),
 
     type: transactionTypeEnum("type").notNull(),
 
-    amount: numeric("amount", { mode: "number" }).notNull(),
-
+    amount: numeric("amount").notNull(),
     category: varchar("category", { length: 100 }).notNull(),
 
     description: varchar("description", { length: 255 }),
@@ -45,13 +42,12 @@ export const transactions = pgTable("transactions", {
     created_at: timestamp("created_at").notNull().defaultNow(),
 
     updated_at: timestamp("updated_at").notNull().defaultNow(),
-}, (table) => [
-    index("transactions_user_id_idx").on(table.user_id),
-    index("transactions_account_id_idx").on(table.account_id),
-    index("transactions_user_type_idx").on(table.user_id, table.type),
-    index("transactions_user_type_date_idx").on(
-        table.user_id,
-        table.type,
-        table.date
-    ),
+},(table) => [
+    index("transactions_user_account_date_id_idx").on(table.user_id, table.account_id, table.date, table.id),
+    index("transactions_user_date_id_idx").on(table.user_id, table.date, table.id),
+    index("transactions_user_type_date_id_idx").on(table.user_id, table.type, table.date, table.id),
+    foreignKey({
+        columns: [table.user_id, table.account_id],
+        foreignColumns: [accounts.user_id, accounts.id],
+    }).onDelete("cascade"),
 ]);

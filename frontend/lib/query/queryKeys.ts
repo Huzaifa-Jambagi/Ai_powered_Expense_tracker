@@ -1,10 +1,13 @@
-import { TransactionFilters } from "../../apis/transactionApis";
+import type { TransactionFilters } from "../../apis/transactionApis";
 
 export const queryKeys = {
     accounts: (userId?: string) => ["accounts", userId] as const,
 
-    transactions: (userId?: string, filters: TransactionFilters = {}) =>
+    transactions: (filters: TransactionFilters, userId?: string) =>
         ["transactions", userId, filters] as const,
+
+    transactionChart: (filters: TransactionFilters, userId?: string) =>
+        ["transactionChart", userId, filters] as const,
 
     budget: (userId?: string) => ["budget", userId] as const,
 
