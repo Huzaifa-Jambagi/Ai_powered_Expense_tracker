@@ -39,10 +39,10 @@ export const transactions = pgTable("transactions", {
 
     flag_reason: varchar("flag_reason", { length: 255 }),
 
-    created_at: timestamp("created_at").notNull().defaultNow(),
-
-    updated_at: timestamp("updated_at").notNull().defaultNow(),
-},(table) => [
+    created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    
+    updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
     index("transactions_user_account_date_id_idx").on(table.user_id, table.account_id, table.date, table.id),
     index("transactions_user_date_id_idx").on(table.user_id, table.date, table.id),
     index("transactions_user_type_date_id_idx").on(table.user_id, table.type, table.date, table.id),

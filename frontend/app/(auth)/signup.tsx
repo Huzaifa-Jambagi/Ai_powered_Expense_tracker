@@ -13,12 +13,12 @@ import {
 } from "react-native";
 
 import { useSignInWithGoogle } from "@clerk/expo/google";
-import { useSignUp, useAuth } from "@clerk/expo";
+import { useSignUp } from "@clerk/expo";
 import { Link, useRouter } from "expo-router";
 import Logo from "../../assets/Logo.svg";
 import GoogleLogo from "../../assets/googleLogo.svg";
 import { UserRound, Mail, LockKeyhole } from "lucide-react-native";
-import { useUser } from "../../hooks/useUser";
+import { useCompleteAuthentication } from "../../hooks/useCompleteAuthentication";
 import {
   signUpSchema,
   type SignUpFormSchema,
@@ -27,9 +27,10 @@ export default function SignUpScreen() {
   const { signUp, errors, fetchStatus } = useSignUp();
   const router = useRouter();
 
-  let isLoading = fetchStatus === "fetching";
+  const { completeAuthentication, isCompletingAuthentication } = useCompleteAuthentication();
+
+  const isLoading = fetchStatus === "fetching" || isCompletingAuthentication;
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [email, setEmail] = useState("");
   const { startGoogleAuthenticationFlow } = useSignInWithGoogle();
 
   const {
@@ -47,36 +48,11 @@ export default function SignUpScreen() {
     },
   });
 
-  const { refetch } = useUser();
-  const navigateUser = async () => {
-
-    try {
-      const { data: user, error } = await refetch();
-
-      if (error || !user) {
-        Alert.alert("Error", "Unable to fetch user details.");
-        return;
-      }
-
-      router.replace(
-        user.onboarding_completed ? "/(root)/(tabs)" : "/(onboarding)/onboarding"
-      );
-    } catch (error) {
-      console.error("Failed to fetch user:", error);
-      Alert.alert("Error", "Unable to fetch user details.");
-    }
-  };
-
-
   const handleGoogleSignUp = async () => {
     setIsGoogleLoading(true);
+
     try {
-      const {
-        createdSessionId,
-        setActive,
-        signIn,
-        signUp,
-      } = await startGoogleAuthenticationFlow();
+      const { createdSessionId, setActive, signIn, signUp } = await startGoogleAuthenticationFlow();
 
       if (!createdSessionId || !setActive) {
         Alert.alert("Authentication incomplete");
@@ -91,16 +67,16 @@ export default function SignUpScreen() {
       }
 
       if (signIn?.status === "complete") {
-        await navigateUser();
+        await completeAuthentication();
         return;
       }
 
       Alert.alert("Authentication incomplete");
     } catch (err: any) {
-      Alert.alert(
-        "Google sign-up failed",
-        err?.message || "Unknown authentication error"
-      );
+      if (err?.code === "SIGN_IN_CANCELLED" || err?.code === "-5") return;
+
+      console.error("Google sign-up error:", err);
+      Alert.alert("Google sign-up failed", err?.message || "Unknown authentication error");
     } finally {
       setIsGoogleLoading(false);
     }
@@ -117,30 +93,23 @@ export default function SignUpScreen() {
       });
 
       if (error) {
-        alert(error.message);
+        Alert.alert("Sign-up failed", error.message);
         return;
       }
 
-      const { error: sendError } =
-        await signUp.verifications.sendEmailCode();
+      const { error: sendError } = await signUp.verifications.sendEmailCode();
 
       if (sendError) {
-        alert(sendError.message);
+        Alert.alert("Verification failed", sendError.message);
         return;
       }
 
-      router.push({
-        pathname: "/otp",
-        params: {
-          email: values.email,
-          flow: "sign-up",
-        },
-      });
+      router.push({ pathname: "/otp", params: { email: values.email, flow: "sign-up" } });
     } catch (error) {
-      console.error(error);
+      console.error("Sign-up failed:", error);
+      Alert.alert("Sign-up failed", error instanceof Error ? error.message : "An unexpected error occurred.");
     }
   };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}

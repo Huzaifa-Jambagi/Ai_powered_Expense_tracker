@@ -75,3 +75,17 @@ export const getTransactionChartApi = async (filters: {
 
     return data.data;
 };
+
+export type ExpenseBreakdown = {
+    category: CategoryKey;
+    amount: string;
+};
+
+export const getExpenseBreakdownApi = async (month: string): Promise<ExpenseBreakdown[]> => {
+    const { data } = await api.get<{ success: boolean; data: ExpenseBreakdown[] }>(
+        "/api/v1/transactions/expense-breakdown",
+        { params: { month } }
+    );
+
+    return data.data;
+};

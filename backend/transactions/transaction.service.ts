@@ -1,5 +1,5 @@
 import { getMonthDateRange } from "../date.js";
-import { getTransactionChart as getTransactionChartRepo, getTransactions as getTransactionsRepo } from "./transaction.repository.js";
+import { getExpenseBreakdownRepo, getTransactionChart as getTransactionChartRepo, getTransactions as getTransactionsRepo } from "./transaction.repository.js";
 
 interface GetTransactionsParams {
     userId: string;
@@ -66,4 +66,14 @@ export const getTransactionChart = async (params: GetTransactionChartParams) => 
             expense: row?.expense ?? "0",
         };
     });
+};
+
+export const getExpenseBreakdown = async (params: {
+    userId: string;
+    month: string;
+    timezone: string;
+}) => {
+    const { startDate, endDate } = getMonthDateRange(params.month, params.timezone);
+
+    return getExpenseBreakdownRepo(params.userId, startDate, endDate);
 };

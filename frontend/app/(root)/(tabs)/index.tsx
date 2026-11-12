@@ -1,21 +1,30 @@
-import { Link } from 'expo-router'
-import { View, Text, ScrollView, RefreshControl } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { userStorage } from '../../../lib/store';
-import { useTransactionsQuery } from '../../../hooks/useTransactionsQuery';
-import { useBudgetQuery } from '../../../hooks/useBudgetQuery';
-import { useAccountsQuery } from '../../../hooks/useAccounts';
-import { useEffect, useMemo, useState, useRef } from "react";
-import { isSameMonth } from 'date-fns'
-import { getCategoryConfig } from '../../../constants/catogories';
-import { type Transaction } from '../../../apis/transactionApis';
-import HomeHeader from '../../../components/HomeScreen/HomeHeader';
-import BalanceCard from '../../../components/HomeScreen/BalanceCard';
-import QuickActions from '../../../components/HomeScreen/QuickActions';
-import AIPromptBar from '../../../components/HomeScreen/AiPromptBar';
-import ExpenseBreakdown from '../../../components/HomeScreen/ExpenseBreakdown';
-import RecentTransactions from '../../../components/HomeScreen/RecentTransactions';
-import MonthlyOverview from '../../../components/HomeScreen/MonthlyOverview';
+import { ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useMemo, useState } from "react";
+import { format } from "date-fns";
+
+import { userStorage } from "../../../lib/store";
+
+import { useTransactionsQuery } from "../../../hooks/useTransactionsQuery";
+import { useTransactionChartQuery } from "../../../hooks/useTransactionChartQuery";
+import { useExpenseBreakdownQuery } from "../../../hooks/useExpenseBreakdownQuery";
+import { useBudgetQuery } from "../../../hooks/useBudgetQuery";
+import { useAccountsQuery } from "../../../hooks/useAccounts";
+
+import { getCategoryConfig } from "../../../constants/catogories";
+
+import HomeHeader from "../../../components/HomeScreen/HomeHeader";
+import BalanceCard from "../../../components/HomeScreen/BalanceCard";
+import BalanceCardSkeleton from "../../../components/HomeScreen/BalanceCardSkeleton";
+import QuickActions from "../../../components/HomeScreen/QuickActions";
+import AIPromptBar from "../../../components/HomeScreen/AiPromptBar";
+import ExpenseBreakdown from "../../../components/HomeScreen/ExpenseBreakdown";
+import ExpenseBreakdownSkeleton from "../../../components/HomeScreen/ExpenseBreakdownSkeleton";
+import RecentTransactions from "../../../components/HomeScreen/RecentTransactions";
+import RecentTransactionsSkeleton from "../../../components/HomeScreen/RecentTransactionsSkeleton";
+
+import MonthlyOverview from "../../../components/HomeScreen/MonthlyOverview";
+import MonthlyOverviewSkeleton from "../../../components/HomeScreen/MonthlyOverviewSkeleton";
 
 export const QUICK_ACTIONS = [
     {
@@ -38,169 +47,120 @@ export const QUICK_ACTIONS = [
     },
 ] as const;
 
-
-
-
 const HomeScreen = () => {
     const user = userStorage.getUser();
-
-    const currency = user?.currency;
-    const firstName = user?.firstName;
     const currencySymbol = user?.currency_symbol ?? "₹";
-    const [budgetModalOpen, setBudgetModalOpen] = useState(false);
+    const currentMonth = format(new Date(), "yyyy-MM");
+
     const [isBalanceVisible, setIsBalanceVisible] = useState(true);
-    const isRefreshing = useRef(false);
-    const lastRefresh = useRef(0);
 
-    const {
-        data: accounts = [],
-        isLoading: accountsLoading,
-        isRefetching: accountsRefetching,
-        refetch: refetchAccounts,
-    } = useAccountsQuery();
+    const { data: accounts = [], isLoading: accountsLoading } = useAccountsQuery();
 
-    const {
-        data: transactions = [],
-        isLoading: transactionsLoading,
-        isRefetching: transactionsRefetching,
-        refetch: refetchTransactions,
-    } = useTransactionsQuery();
+    const { data: transactionPages, isLoading: transactionsLoading } =
+        useTransactionsQuery({ month: currentMonth });
 
+    const { data: chartData, isLoading: chartLoading } =
+        useTransactionChartQuery({ month: currentMonth });
 
+    const { data: breakdownData, isLoading: breakdownLoading } =
+        useExpenseBreakdownQuery(currentMonth);
 
-    const { data: budgetResponse, refetch: refetchBudget } = useBudgetQuery();
+    const { data: budgetResponse, isLoading: budgetLoading } = useBudgetQuery();
 
     const budgets = budgetResponse?.data ?? [];
 
-
-    const loading = accountsLoading || transactionsLoading
-    const refreshing = accountsRefetching || transactionsRefetching
-
-    // useEffect(() => {
-    //     console.log("Accounts:", accounts);
-    //     console.log("Transactions:", transactions);
-    //     console.log("Budget:", budget);
-    // }, [accounts, transactions, budget]);;
-
-    const onRefresh = async () => {
-        const now = Date.now();
-
-        if (isRefreshing.current || now - lastRefresh.current < 10000) {
-            return;
-        }
-
-        isRefreshing.current = true;
-        lastRefresh.current = now;
-
-        try {
-            await Promise.all([
-                refetchAccounts(),
-                refetchTransactions(),
-                refetchBudget(),
-            ]);
-        } finally {
-            isRefreshing.current = false;
-        }
-    };
+    const recentTransactions = transactionPages?.pages[0]?.data.slice(0, 5) ?? [];
 
     const totalBalance = useMemo(
         () => accounts.reduce((sum, account) => sum + Number(account.balance), 0),
         [accounts]
     );
 
-    const monthTransactions = useMemo(() => {
-        const now = new Date();
-
-        return transactions.filter((tx) => isSameMonth(new Date(tx.date), now));
-    }, [transactions]);
-
     const monthIncome = useMemo(
-        () =>
-            monthTransactions
-                .filter((tx) => tx.type === "INCOME")
-                .reduce((sum, tx) => sum + Number(tx.amount), 0),
-        [monthTransactions]
+        () => chartData?.reduce((sum, day) => sum + Number(day.income), 0) ?? 0,
+        [chartData]
     );
 
     const monthExpense = useMemo(
-        () =>
-            monthTransactions
-                .filter((tx) => tx.type === "EXPENSE")
-                .reduce((sum, tx) => sum + Number(tx.amount), 0),
-        [monthTransactions]
+        () => chartData?.reduce((sum, day) => sum + Number(day.expense), 0) ?? 0,
+        [chartData]
     );
 
-    const recentTransactions = useMemo(
-        () => transactions.slice(0, 5),
-        [transactions]
+    const expenseBreakdown = useMemo(
+        () => breakdownData?.map(({ category, amount }) => ({
+            category,
+            amount: Number(amount),
+            color: getCategoryConfig(category).color,
+        })) ?? [],
+        [breakdownData]
     );
 
-    const expenseBreakdown = useMemo(() => {
-        const map: Record<string, number> = {};
-
-        monthTransactions
-            .filter((tx) => tx.type === "EXPENSE")
-            .forEach((tx) => {
-                map[tx.category] = (map[tx.category] ?? 0) + Number(tx.amount);
-            });
-
-        return Object.entries(map)
-            .sort((a, b) => b[1] - a[1])
-            .map(([category, amount]) => ({
-                category: category as Transaction["category"],
-                amount,
-                color: getCategoryConfig(category as Transaction["category"]).color,
-            }));
-    }, [monthTransactions]);
-
-   const totalBudget = useMemo(
-    () => budgets.reduce((sum, budget) => sum + Number(budget.amount), 0),
-    [budgets]
-);
-
+    const totalBudget = useMemo(
+        () => budgets.reduce((sum, budget) => sum + Number(budget.amount), 0),
+        [budgets]
+    );
 
     return (
         <SafeAreaView className="flex-1 bg-brand-bg" edges={["top"]}>
             <ScrollView
                 className="flex-1 bg-[#F8F8F7]"
                 showsVerticalScrollIndicator={false}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                }
             >
                 <HomeHeader
                     isBalanceVisible={isBalanceVisible}
-                    onToggleVisibility={() => setIsBalanceVisible(prev => !prev)}
-                />
-                <BalanceCard
-                    totalBalance={totalBalance}
-                    currencySymbol={currencySymbol}
-                    budget={totalBudget}
-                    monthExpense={monthExpense}
-                    isBalanceVisible={isBalanceVisible}
+                    onToggleVisibility={() => setIsBalanceVisible((prev) => !prev)}
                 />
 
-                <MonthlyOverview
-                    income={monthIncome}
-                    expense={monthExpense}
-                    currencySymbol={currencySymbol}
-                    isBalanceVisible={isBalanceVisible}
-                />
+                {accountsLoading || budgetLoading || chartLoading ? (
+                    <BalanceCardSkeleton />
+                ) : (
+                    <BalanceCard
+                        totalBalance={totalBalance}
+                        currencySymbol={currencySymbol}
+                        budget={totalBudget}
+                        monthExpense={monthExpense}
+                        isBalanceVisible={isBalanceVisible}
+                    />
+                )}
+
+
+                {chartLoading ? (
+                    <MonthlyOverviewSkeleton />
+                ) : (
+                    <MonthlyOverview
+                        income={monthIncome}
+                        expense={monthExpense}
+                        currencySymbol={currencySymbol}
+                        isBalanceVisible={isBalanceVisible}
+                    />
+                )}
+
                 <QuickActions actions={QUICK_ACTIONS} />
+
                 <AIPromptBar />
-                <ExpenseBreakdown
-                    data={expenseBreakdown}
-                    currencySymbol={currencySymbol}
-                    isBalanceVisible={isBalanceVisible}
-                />
-                <RecentTransactions
-                    transactions={recentTransactions}
-                    currencySymbol={currencySymbol}
-                    isBalanceVisible={isBalanceVisible}
-                />
+
+                {breakdownLoading ? (
+                    <ExpenseBreakdownSkeleton />
+                ) : (
+                    <ExpenseBreakdown
+                        data={expenseBreakdown}
+                        currencySymbol={currencySymbol}
+                        isBalanceVisible={isBalanceVisible}
+                    />
+                )}
+
+                {transactionsLoading ? (
+                    <RecentTransactionsSkeleton />
+                ) : (
+                    <RecentTransactions
+                        transactions={recentTransactions}
+                        currencySymbol={currencySymbol}
+                        isBalanceVisible={isBalanceVisible}
+                    />
+                )}
             </ScrollView>
         </SafeAreaView>
-    )
-}
+    );
+};
 
-export default HomeScreen
+export default HomeScreen;

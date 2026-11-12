@@ -13,3 +13,7 @@ export const getTransactionChartSchema = z.object({
     accountId: z.string().uuid().optional(),
     type: z.enum(["INCOME", "EXPENSE"]).optional(),
 });
+
+export const getExpenseBreakdownSchema = z.object({
+    month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+});

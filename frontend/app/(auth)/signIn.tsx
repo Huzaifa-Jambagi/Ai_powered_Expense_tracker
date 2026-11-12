@@ -1,7 +1,7 @@
 import { useSignInWithGoogle } from '@clerk/expo/google';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { useUser } from "../../hooks/useUser";
+import { useCompleteAuthentication } from "../../hooks/useCompleteAuthentication";
 import { useState } from 'react';
 import {
   Text,
@@ -25,11 +25,14 @@ import {
 
 export default function SignInScreen() {
   const { signIn, errors, fetchStatus } = useSignIn();
-  const { startGoogleAuthenticationFlow } = useSignInWithGoogle()
+  const { startGoogleAuthenticationFlow } = useSignInWithGoogle();
   const router = useRouter();
 
-  const isLoading = fetchStatus === "fetching";
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  const { completeAuthentication, isCompletingAuthentication } = useCompleteAuthentication();
+
+  const isLoading = fetchStatus === "fetching" || isCompletingAuthentication;
 
   const {
     control,
@@ -43,26 +46,6 @@ export default function SignInScreen() {
       password: "",
     },
   });
-
-
-  const { refetch } = useUser(true);
-
-  const navigateUser = async () => {    
-    try {
-      const { data: user, error } = await refetch();
-
-      if (error || !user) {
-        Alert.alert("Error", "Unable to fetch user details.");
-        return;
-      }
-      router.replace(
-        user.onboarding_completed ? "/(root)/(tabs)" : "/(onboarding)/onboarding"
-      );
-    } catch (error) {
-      console.error("Failed to fetch user:", error);
-      Alert.alert("Error", "Unable to fetch user details.");
-    }
-  };
 
   const onSignInPress = async (values: SignInFormSchema) => {
     try {
@@ -78,9 +61,7 @@ export default function SignInScreen() {
 
       if (signIn.status === "complete") {
         await signIn.finalize();
-
-        await navigateUser();
-
+        await completeAuthentication();
         return;
       }
 
@@ -126,21 +107,19 @@ export default function SignInScreen() {
       );
     } catch (error) {
       console.error("Sign-in failed:", error);
-
+      Alert.alert("Sign-in failed", error instanceof Error ? error.message : "An unexpected error occurred.");
     }
   };
 
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
+
     try {
       const { createdSessionId, setActive, signIn, signUp } = await startGoogleAuthenticationFlow();
-       
+
       if (!createdSessionId || !setActive) {
-        Alert.alert(
-          "Sign-in incomplete",
-          "Google authentication did not create a session."
-        );
+        Alert.alert("Sign-in incomplete", "Google authentication did not create a session.");
         return;
       }
 
@@ -152,25 +131,16 @@ export default function SignInScreen() {
       }
 
       if (signIn?.status === "complete") {
-        await navigateUser();
+        await completeAuthentication();
         return;
       }
 
       Alert.alert("Sign-in incomplete");
     } catch (err: any) {
-      if (
-        err.code === "SIGN_IN_CANCELLED" ||
-        err.code === "-5"
-      ) {
-        return;
-      }
+      if (err.code === "SIGN_IN_CANCELLED" || err.code === "-5") return;
 
       console.error("Google sign-in error:", err);
-
-      Alert.alert(
-        "Google sign-in failed",
-        err.message || "An error occurred during Google sign-in."
-      );
+      Alert.alert("Google sign-in failed", err.message || "An error occurred during Google sign-in.");
     } finally {
       setIsGoogleLoading(false);
     }

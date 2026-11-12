@@ -83,3 +83,20 @@ export const getTransactionChart = async (params: GetTransactionChartParams) => 
         .groupBy(sql`1`)
         .orderBy(sql`1`);
 };
+
+export const getExpenseBreakdownRepo = async (userId: string, startDate: Date, endDate: Date) => {
+    return db
+        .select({
+            category: transactions.category,
+            amount: sql<string>`SUM(${transactions.amount})::text`,
+        })
+        .from(transactions)
+        .where(and(
+            eq(transactions.user_id, userId),
+            eq(transactions.type, "EXPENSE"),
+            gte(transactions.date, startDate),
+            lt(transactions.date, endDate),
+        ))
+        .groupBy(transactions.category)
+        .orderBy(desc(sql`SUM(${transactions.amount})`));
+};

@@ -8,6 +8,8 @@ import {
     getTransactionsSchema,
     getTransactionChartSchema,
 } from "./transactions.validation.js";
+import { getExpenseBreakdown as getExpenseBreakdownService } from "./transaction.service.js";
+import { getExpenseBreakdownSchema } from "./transactions.validation.js";
 
 export const getTransactions = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -83,6 +85,48 @@ export const getTransactionChart = async (req: Request, res: Response, next: Nex
         }
 
         const result = await getTransactionChartService({
+            ...validation.data,
+            userId,
+            timezone,
+        });
+
+        return res.status(200).json({ success: true, data: result });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getExpenseBreakdown = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userId } = getAuth(req);
+
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        const timezone = req.headers["x-timezone"];
+
+        if (typeof timezone !== "string" || !timezone) {
+            return res.status(400).json({ success: false, message: "Timezone is required" });
+        }
+
+        try {
+            new Intl.DateTimeFormat("en-US", { timeZone: timezone });
+        } catch {
+            return res.status(400).json({ success: false, message: "Invalid timezone" });
+        }
+
+        const validation = getExpenseBreakdownSchema.safeParse(req.query);
+
+        if (!validation.success) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid query parameters",
+                errors: validation.error.flatten(),
+            });
+        }
+
+        const result = await getExpenseBreakdownService({
             ...validation.data,
             userId,
             timezone,

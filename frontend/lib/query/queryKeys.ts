@@ -13,4 +13,7 @@ export const queryKeys = {
 
     budgetByCategory: (userId?: string, category?: string) =>
         ["budget", userId, category] as const,
+
+    expenseBreakdown: (month: string, userId?: string) =>
+    ["expenseBreakdown", userId, month] as const,
 };
