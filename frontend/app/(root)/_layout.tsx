@@ -1,29 +1,32 @@
-
 import { Stack, Redirect } from "expo-router";
 import { useAuth } from "@clerk/expo";
 import { useEffect } from "react";
 
-import DashboardSkeleton from "../../components/Dashboard/DashboardSkeleton";
-import { useUser } from "../../hooks/useUser";
 import { userStorage } from "../../lib/store";
 
 export default function RootGroupLayout() {
-  const { isLoaded, isSignedIn } = useAuth();
-  const { data: user, isLoading } = useUser(isLoaded && isSignedIn);
+  const { isLoaded, isSignedIn, userId, signOut } = useAuth();
+
+  const user = userStorage.getUser();
+  const hasMatchingUser = Boolean(userId && user?.clerk_id === userId);
 
   useEffect(() => {
-    if (!user) return;
+    if (!isLoaded || !isSignedIn || hasMatchingUser) return;
 
-    userStorage.setUser(user);
-  }, [user]);
+    userStorage.clearUser();
 
-  if (!isLoaded || (isSignedIn && (!user || isLoading))) {
-    return <DashboardSkeleton />;
-  }
+    void signOut().catch((error) => {
+      console.error("Failed to sign out user:", error);
+    });
+  }, [isLoaded, isSignedIn, userId, hasMatchingUser, signOut]);
+
+  if (!isLoaded) return null;
 
   if (!isSignedIn) {
     return <Redirect href="/(auth)/signIn" />;
   }
+
+  if (!user || user.clerk_id !== userId) return null;
 
   if (!user.onboarding_completed) {
     return <Redirect href="/(onboarding)/onboarding" />;

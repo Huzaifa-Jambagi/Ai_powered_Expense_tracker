@@ -15,16 +15,19 @@ export const getUserDetails = async (clerkId: string) => {
 }
 
 export const completeOnboarding = async (clerkId: string, startingBalance: number, currency: string) => {
-  await db.transaction(async (tx) => {
-    await tx
+  return db.transaction(async (tx) => {
+    const [user] = await tx
       .update(users)
       .set({ onboarding_completed: true, currency })
-      .where(eq(users.clerk_id, clerkId));
+      .where(eq(users.clerk_id, clerkId))
+      .returning();
+
+    if (!user) throw new Error("User not found");
 
     const [account] = await tx
       .insert(accounts)
       .values({
-        balance: startingBalance,
+        balance: startingBalance.toString(),
         is_default: true,
         user_id: clerkId,
       })
@@ -34,14 +37,14 @@ export const completeOnboarding = async (clerkId: string, startingBalance: numbe
       user_id: clerkId,
       account_id: account.id,
       type: "INCOME",
-      amount: startingBalance,
+      amount: startingBalance.toString(),
       category: "other_income",
       description: "Starting balance",
       date: new Date(),
       input_method: "MANUAL",
       status: "COMPLETED",
     });
-  });
 
-  return true;
+    return user;
+  });
 };

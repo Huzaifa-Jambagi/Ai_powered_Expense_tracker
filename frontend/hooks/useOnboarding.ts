@@ -7,11 +7,7 @@ export const useCompleteOnboarding = () => {
 
   return useMutation({
     mutationFn: completeOnboarding,
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-    },
-
+    
      onError: (error) => {
       Alert.alert("Error", error.message);
     },

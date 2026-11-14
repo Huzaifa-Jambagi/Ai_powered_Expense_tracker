@@ -7,6 +7,7 @@ import { Feather } from "@expo/vector-icons";
 import { CurrencyPicker, ALL_CURRENCIES } from "../../components/CurrencyPicker";
 import Logo from "../../assets/Logo.svg";
 import { useRouter } from "expo-router";
+import { userStorage } from "../../lib/store";
 import {
   View,
   TextInput,
@@ -49,7 +50,8 @@ export default function OnboardingScreen() {
         currency: values.currency,
       },
       {
-        onSuccess: () => {
+        onSuccess: (user) => {
+          userStorage.setUser(user);
           router.replace("/(root)/(tabs)");
         },
       }

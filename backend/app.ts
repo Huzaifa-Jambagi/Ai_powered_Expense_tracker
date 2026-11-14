@@ -9,12 +9,16 @@ import accountRoutes from "./accounts/accounts.routes.js"
 import transactionRoutes from "./transactions/transaction.route.js"
 import budgetRoutes from "./budget/budget.route.js"
 import { errorHandler } from "./middleware/errorHandler.js";
-
+import morgan from 'morgan';
 const app = express();
 
 // Middlewares
 app.use(cors({ origin: "*" }));
-
+app.use((req, res, next) => {
+  console.log("INCOMING:", req.method, req.url);
+  next();
+});
+app.use(morgan('dev'));
 app.use("/api/v1/webhooks", webhookRoutes);
 
 // Normal application middleware
@@ -52,3 +56,5 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 });
 
 export default app;
+
+

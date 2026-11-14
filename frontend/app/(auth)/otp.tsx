@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import Logo from "../../assets/Logo.svg";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useCompleteAuthentication } from "../../hooks/useCompleteAuthentication";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type otpFormValues, otpSchema } from "../../lib/schemas/authSchema";
@@ -24,14 +25,14 @@ const Otp = () => {
 
   const { signUp, fetchStatus: signUpFetchStatus } = useSignUp();
   const { signIn, fetchStatus: signInFetchStatus } = useSignIn();
+  const { completeAuthentication, isCompletingAuthentication } = useCompleteAuthentication();
+
+  const isLoading = signUpFetchStatus === "fetching" ||
+    signInFetchStatus === "fetching" || isCompletingAuthentication;
 
   const router = useRouter();
 
   const isSignInFlow = flow === "sign-in";
-
-  const isLoading =
-    signUpFetchStatus === "fetching" ||
-    signInFetchStatus === "fetching";
 
   const [isResending, setIsResending] = useState(false);
 
@@ -48,41 +49,45 @@ const Otp = () => {
   });
 
   const onVerify = async ({ otp }: otpFormValues) => {
+    if (flow !== "sign-in" && flow !== "sign-up") {
+      Alert.alert("Invalid flow", "Please restart the sign-in or sign-up process.");
+      return;
+    }
     try {
       if (isSignInFlow) {
-        const { error } = await signIn.mfa.verifyEmailCode({
-          code: otp,
-        });
+        const { error } = await signIn.mfa.verifyEmailCode({ code: otp });
 
         if (error) {
           Alert.alert("Verification failed", error.message);
           return;
         }
 
-        if (signIn.status === "complete") {
-          await signIn.finalize({
-            navigate: ({ session, decorateUrl }) => {
-              if (session?.currentTask) return;
-              router.replace(decorateUrl("/") as any);
-            },
-          });
-
+        if (signIn.status !== "complete") {
+          console.error("Sign-in verification incomplete:", signIn.status);
+          Alert.alert("Sign-in incomplete", "Email verification did not complete sign-in.");
           return;
         }
 
-        console.error(
-          "Sign-in verification incomplete:",
-          signIn.status
-        );
+        const { error: finalizeError } = await signIn.finalize();
+
+        if (finalizeError) {
+          Alert.alert("Sign-in failed", finalizeError.message);
+          return;
+        }
+
+        await completeAuthentication();
         return;
       }
 
-      const { error } = await signUp.verifications.verifyEmailCode({
-        code: otp,
-      });
+      const { error } = await signUp.verifications.verifyEmailCode({ code: otp });
 
       if (error) {
         Alert.alert("Verification failed", error.message);
+        return;
+      }
+
+      if (signUp.status !== "complete") {
+        Alert.alert("Sign-up incomplete", "Email verification did not complete sign-up.");
         return;
       }
 
@@ -94,20 +99,18 @@ const Otp = () => {
       }
 
       router.replace("/(onboarding)/onboarding");
-      
     } catch (error) {
       console.error("OTP verification failed:", error);
-
-      Alert.alert(
-        "Verification failed",
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred."
-      );
+      Alert.alert("Verification failed", error instanceof Error ? error.message : "An unexpected error occurred.");
     }
   };
 
   const onResendOtp = async () => {
+    if (flow !== "sign-in" && flow !== "sign-up") {
+      Alert.alert("Invalid flow", "Please restart the sign-in or sign-up process.");
+      return;
+    }
+
     setIsResending(true);
 
     try {
