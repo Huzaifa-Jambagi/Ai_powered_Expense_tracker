@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { format } from "date-fns";
-
+import { endOfDay, format, startOfDay, subMonths } from "date-fns";
 type Props = {
     value: Date;
     onChange: (date: Date) => void;
@@ -11,6 +10,15 @@ type Props = {
 
 export default function TransactionDatePicker({ value, onChange }: Props) {
     const [isVisible, setIsVisible] = useState(false);
+
+    const today = new Date();
+    const minimumDate = startOfDay(subMonths(today, 11));
+    const maximumDate = endOfDay(today);
+
+    const handleDateChange = (_event: unknown, date: Date) => {
+        onChange(date);
+        setIsVisible(false);
+    };
 
     return (
         <View className="mb-6">
@@ -36,10 +44,9 @@ export default function TransactionDatePicker({ value, onChange }: Props) {
                     value={value}
                     mode="date"
                     display={Platform.OS === "ios" ? "inline" : "calendar"}
-                    onValueChange={(_, date) => {
-                        onChange(date);
-                        setIsVisible(false);
-                    }}
+                    minimumDate={minimumDate}
+                    maximumDate={maximumDate}
+                    onValueChange={handleDateChange}
                     onDismiss={() => setIsVisible(false)}
                 />
             )}

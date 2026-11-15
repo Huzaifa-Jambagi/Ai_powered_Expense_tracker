@@ -33,7 +33,7 @@ export default function RecentTransactions({
             </View>
 
             {transactions.length > 0 ? (
-                <View className="gap-3">
+                <View className="">
                     {transactions.map((transaction) => (
                         <TransactionItem
                             key={transaction.id}
