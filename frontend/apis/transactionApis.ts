@@ -40,6 +40,22 @@ export type TransactionChartFilters = {
     accountId?: string;
 };
 
+export type AddTransactionPayload = {
+    accountId: string;
+    type: TransactionType;
+    amount: string;
+    category: CategoryKey;
+    description: string | null;
+    date: string;
+    input_method: "manual" | "scan" | "mic";
+    voice_transcript: string | null;
+};
+
+type AddTransactionResponse = {
+    success: boolean;
+    message: string;
+};
+
 export const getTransactionsApi = async (filters: {
     month: string;
     type?: TransactionType;
@@ -59,6 +75,14 @@ export const getTransactionsApi = async (filters: {
             };
         };
     }>("/api/v1/transactions/get", { params: filters });
+    console.log(
+        "TRANSACTION DATES:",
+        data.data.data.map((t) => ({
+            id: t.id,
+            date: t.date,
+            created_at: t.created_at,
+        })),
+    );
 
     return data.data;
 };
@@ -88,4 +112,16 @@ export const getExpenseBreakdownApi = async (month: string): Promise<ExpenseBrea
     );
 
     return data.data;
+};
+
+
+export const addTransactionApi = async (payload: AddTransactionPayload): Promise<AddTransactionResponse> => {
+    const { data } = await api.post<AddTransactionResponse>(
+        "/api/v1/transactions/add",
+        payload,
+    );
+
+    if (!data.success) throw new Error(data.message || "Transaction could not be saved.");
+
+    return data;
 };

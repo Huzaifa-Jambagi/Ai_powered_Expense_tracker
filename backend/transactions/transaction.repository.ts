@@ -21,6 +21,19 @@ interface GetTransactionChartParams {
     type?: "INCOME" | "EXPENSE";
 }
 
+interface AddTransactionParams {
+    userId: string;
+    accountId: string;
+    type: "INCOME" | "EXPENSE";
+    amount: string;
+    category: string;
+    description: string | null;
+    date: Date;
+    status: string;
+    input_method: string;
+    voice_transcript: string | null;
+}
+
 export const getTransactions = async (params: GetTransactionsParams) => {
     const conditions = [
         eq(transactions.user_id, params.userId),
@@ -99,4 +112,40 @@ export const getExpenseBreakdownRepo = async (userId: string, startDate: Date, e
         ))
         .groupBy(transactions.category)
         .orderBy(desc(sql`SUM(${transactions.amount})`));
+};
+
+export const addTransaction = async (params: AddTransactionParams): Promise<void> => {
+    await db.transaction(async (tx) => {
+        const balanceAmount = params.type === "INCOME" ? params.amount : `-${params.amount}`;
+
+        const [account] = await tx
+            .update(accounts)
+            .set({
+                balance: sql`${accounts.balance} + ${balanceAmount}::numeric`,
+            })
+            .where(
+                and(
+                    eq(accounts.id, params.accountId),
+                    eq(accounts.user_id, params.userId)
+                )
+            )
+            .returning({ id: accounts.id });
+
+        if (!account) {
+            throw new Error("Account not found");
+        }
+
+        await tx.insert(transactions).values({
+            account_id: params.accountId,
+            user_id: params.userId,
+            type: params.type,
+            amount: params.amount,
+            category: params.category,
+            description: params.description,
+            date: params.date,
+            status: params.status,
+            input_method: params.input_method,
+            voice_transcript: params.voice_transcript,
+        });
+    });
 };

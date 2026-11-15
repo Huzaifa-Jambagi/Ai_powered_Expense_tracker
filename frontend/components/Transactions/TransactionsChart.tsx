@@ -1,5 +1,5 @@
-import { memo, useMemo } from "react";
-import { ScrollView, Text, View, useWindowDimensions } from "react-native";
+import { memo, useMemo, useState } from "react";
+import { Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 
 import type { DailyTransactionChart } from "../../apis/transactionApis";
 
@@ -33,6 +33,17 @@ const formatAxisValue = (value: number) => {
     return String(value);
 };
 
+const formatCurrency = (value: number) => `₹${value.toLocaleString("en-IN")}`;
+
+const formatFullDate = (dateString: string) => {
+    const [year, month, day] = dateString.split("-").map(Number);
+
+    return new Date(year, month - 1, day).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+    });
+};
+
 const getDateLabel = (dateString: string, index: number) => {
     const [year, month, day] = dateString.split("-").map(Number);
 
@@ -46,6 +57,7 @@ const getDateLabel = (dateString: string, index: number) => {
 
 function TransactionsChart({ data }: TransactionsChartProps) {
     const { width } = useWindowDimensions();
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
     const { ticks, bars } = useMemo(() => {
         const parsed = data.map((item) => ({
@@ -70,6 +82,8 @@ function TransactionsChart({ data }: TransactionsChartProps) {
             bars: parsed.map((item, index) => ({
                 date: item.date,
                 label: getDateLabel(item.date, index),
+                income: item.income,
+                expense: item.expense,
                 incomeHeight: (item.income / axisMax) * CHART_HEIGHT,
                 expenseHeight: (item.expense / axisMax) * CHART_HEIGHT,
             })),
@@ -94,9 +108,10 @@ function TransactionsChart({ data }: TransactionsChartProps) {
 
     const chartWidth = Math.max(width - 98, bars.length * MIN_ITEM_WIDTH);
     const itemWidth = chartWidth / bars.length;
+    const selected = bars.find((bar) => bar.date === selectedDate);
 
     return (
-        <View className="rounded-[20px] border border-gray-200/70 bg-white p-4">
+        <View className="rounded-[20px] border border-[#EAEAEA] bg-white p-4">
             {/* Chart heading and legend */}
             <View className="mb-5 flex-row items-center justify-between">
                 <Text className="text-base font-bold text-slate-950">
@@ -148,10 +163,17 @@ function TransactionsChart({ data }: TransactionsChartProps) {
                             ))}
 
                             {bars.map((bar) => (
-                                <View
+                                <Pressable
                                     key={bar.date}
+                                    onPress={() =>
+                                        setSelectedDate((current) =>
+                                            current === bar.date ? null : bar.date
+                                        )
+                                    }
                                     style={{ width: itemWidth }}
-                                    className="h-full flex-row items-end justify-center gap-[3px]"
+                                    className={`h-full flex-row items-end justify-center gap-[3px] rounded-lg ${
+                                        bar.date === selectedDate ? "bg-gray-100/60" : ""
+                                    }`}
                                 >
                                     <View
                                         style={{ height: bar.incomeHeight }}
@@ -161,7 +183,7 @@ function TransactionsChart({ data }: TransactionsChartProps) {
                                         style={{ height: bar.expenseHeight }}
                                         className="w-[10px] rounded-t-[5px] bg-red-500"
                                     />
-                                </View>
+                                </Pressable>
                             ))}
                         </View>
 
@@ -180,6 +202,31 @@ function TransactionsChart({ data }: TransactionsChartProps) {
                     </View>
                 </ScrollView>
             </View>
+
+            {/* Selected day breakdown */}
+            {selected && (
+                <View className="mt-4 rounded-xl bg-gray-50 p-3">
+                    <Text className="text-sm font-bold text-slate-950">
+                        {formatFullDate(selected.date)}
+                    </Text>
+
+                    <View className="mt-2 flex-row gap-8">
+                        <View>
+                            <Text className="text-xs text-slate-500">Income</Text>
+                            <Text className="text-sm font-semibold text-green-600">
+                                {formatCurrency(selected.income)}
+                            </Text>
+                        </View>
+
+                        <View>
+                            <Text className="text-xs text-slate-500">Expense</Text>
+                            <Text className="text-sm font-semibold text-red-500">
+                                {formatCurrency(selected.expense)}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+            )}
         </View>
     );
 }

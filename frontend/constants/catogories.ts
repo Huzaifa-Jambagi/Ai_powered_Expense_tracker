@@ -1,5 +1,5 @@
 export const CATEGORIES = {
-  // ── EXPENSE (15) ──────────────────────────────────────────
+  // EXPENSE (15) 
   food: {
     label: "Food & Dining",
     icon: "🍔",
@@ -84,13 +84,19 @@ export const CATEGORIES = {
     color: "#FD9644",
     type: "EXPENSE",
   },
+  investment: {
+    label: "Investment",
+    icon: "📈",
+    color: "#1ABC9C",
+    type: "EXPENSE",
+  },
   other: {
     label: "Other",
     icon: "📦",
     color: "#BDC3C7",
     type: "EXPENSE",
   },
-  // ── INCOME (6) ────────────────────────────────────────────
+  // INCOME (6)
   salary: {
     label: "Salary",
     icon: "💼",
@@ -109,10 +115,10 @@ export const CATEGORIES = {
     color: "#00B894",
     type: "INCOME",
   },
-  investment: {
-    label: "Investment",
-    icon: "📈",
-    color: "#1ABC9C",
+  investments: {
+    label: "Investments",
+    icon: "💰",
+    color: "#27AE60",
     type: "INCOME",
   },
   gift: {
@@ -129,7 +135,7 @@ export const CATEGORIES = {
   },
 } as const;
 
-// ── DERIVED HELPERS ───────────────────────────────────────────
+//DERIVED HELPERS 
 
 export type CategoryKey = keyof typeof CATEGORIES;
 

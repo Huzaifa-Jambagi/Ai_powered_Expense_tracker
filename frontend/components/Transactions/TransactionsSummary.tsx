@@ -23,12 +23,12 @@ export default function TransactionsSummary({
     const netColor = net > 0 ? "#16A34A" : net < 0 ? "#EF4444" : "#64748B";
 
     return (
-        <View className="flex-row items-center rounded-[20px] border border-gray-200/70 bg-white px-2 py-3">
+        <View className="flex-row items-center rounded-[20px] border border-[#EAEAEA] bg-white px-2 py-3">
             {/* Income */}
             <View className="flex-1 items-center">
                 <Feather name="arrow-down-circle" size={22} color="#16A34A" />
 
-                <Text className="mt-1 text-base font-bold text-slate-950" numberOfLines={1} adjustsFontSizeToFit>
+                <Text className="mt-1 text-base font-bold text-[#16A34A]" numberOfLines={1} adjustsFontSizeToFit>
                     {formatAmount(income, currencySymbol)}
                 </Text>
 
@@ -41,7 +41,7 @@ export default function TransactionsSummary({
             <View className="flex-1 items-center">
                 <Feather name="arrow-up-circle" size={22} color="#EF4444" />
 
-                <Text className="mt-1 text-base font-bold text-slate-950" numberOfLines={1} adjustsFontSizeToFit>
+                <Text className="mt-1 text-base font-bold text-[#EF4444]" numberOfLines={1} adjustsFontSizeToFit>
                     {formatAmount(expense, currencySymbol)}
                 </Text>
 
@@ -52,7 +52,7 @@ export default function TransactionsSummary({
 
             {/* Net */}
             <View className="flex-1 items-center">
-                <MaterialCommunityIcons name="wallet-outline" size={22} color="#2563EB" />
+                <MaterialCommunityIcons name="wallet-outline" size={22} color="#16A34A" />
 
                 <Text
                     className="mt-1 text-base font-bold"

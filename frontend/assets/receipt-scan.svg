@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="receiptPaper" x1="150" y1="105" x2="365" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#FFF8FA"/>
+    </linearGradient>
+    <linearGradient id="roseStroke" x1="103" y1="95" x2="410" y2="415" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E11D48"/>
+      <stop offset="1" stop-color="#BE185D"/>
+    </linearGradient>
+    <linearGradient id="paperLine" x1="176" y1="0" x2="337" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9A8B8"/>
+      <stop offset="1" stop-color="#FBCAD4"/>
+    </linearGradient>
+    <filter id="paperShadow" x="112" y="73" width="315" height="387" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dx="0" dy="12"/>
+      <feGaussianBlur stdDeviation="12"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix values="0 0 0 0 0.55 0 0 0 0 0.09 0 0 0 0 0.22 0 0 0 0.16 0"/>
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+  </defs>
+
+  <!-- Receipt sheet -->
+  <g filter="url(#paperShadow)">
+    <path d="M174 112C174 101.507 182.507 93 193 93H319C329.493 93 338 101.507 338 112V374L320 390L302 374L284 390L266 374L248 390L230 374L212 390L194 374L174 390V112Z" fill="url(#receiptPaper)" stroke="#F3B7C4" stroke-width="5" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Receipt header mark -->
+  <rect x="205" y="132" width="102" height="12" rx="6" fill="#FCE7EC"/>
+  <rect x="205" y="174" width="100" height="11" rx="5.5" fill="url(#paperLine)"/>
+  <rect x="205" y="205" width="82" height="11" rx="5.5" fill="url(#paperLine)"/>
+  <rect x="205" y="236" width="96" height="11" rx="5.5" fill="url(#paperLine)"/>
+  <rect x="205" y="267" width="58" height="11" rx="5.5" fill="url(#paperLine)"/>
+  <rect x="205" y="298" width="87" height="11" rx="5.5" fill="url(#paperLine)"/>
+  <path d="M205 338H305" stroke="#FCE7EC" stroke-width="5" stroke-linecap="round" stroke-dasharray="7 10"/>
+
+  <!-- Scanner corner brackets -->
+  <path d="M137 177V139C137 127.954 145.954 119 157 119H195" stroke="url(#roseStroke)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M317 119H355C366.046 119 375 127.954 375 139V177" stroke="url(#roseStroke)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M137 335V373C137 384.046 145.954 393 157 393H195" stroke="url(#roseStroke)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M317 393H355C366.046 393 375 384.046 375 373V335" stroke="url(#roseStroke)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Small restrained sparkle accents -->
+  <path d="M405 125L410 140L425 145L410 150L405 165L400 150L385 145L400 140L405 125Z" fill="#F9A8B8"/>
+  <circle cx="111" cy="276" r="6" fill="#FBCAD4"/>
+  <circle cx="397" cy="285" r="5" fill="#FBCAD4"/>
+</svg>

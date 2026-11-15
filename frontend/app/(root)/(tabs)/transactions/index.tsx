@@ -144,6 +144,10 @@ export default function TransactionsScreen() {
         />
 
         <TransactionsChart data={chartData} />
+
+        <Text className="text-xl font-semibold text-slate-800 mb-3">
+          Transactions
+        </Text>
       </View>
     ),
     [openFilterModal, summary, chartData]
@@ -152,7 +156,7 @@ export default function TransactionsScreen() {
   return (
     <SafeAreaView
       edges={Platform.OS === "ios" ? [] : ["top", "left", "right"]}
-      className="flex-1 bg-white"
+      className="flex-1 bg-[#F8F8F7]"
     >
       <FlatList
         data={transactions}

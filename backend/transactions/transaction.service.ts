@@ -1,5 +1,7 @@
 import { getMonthDateRange } from "../date.js";
 import { getExpenseBreakdownRepo, getTransactionChart as getTransactionChartRepo, getTransactions as getTransactionsRepo } from "./transaction.repository.js";
+import { addTransaction as addTransactionRepo } from "./transaction.repository.js";
+import type { AddTransactionInput } from "./transactions.validation.js";
 
 interface GetTransactionsParams {
     userId: string;
@@ -76,4 +78,13 @@ export const getExpenseBreakdown = async (params: {
     const { startDate, endDate } = getMonthDateRange(params.month, params.timezone);
 
     return getExpenseBreakdownRepo(params.userId, startDate, endDate);
+};
+
+
+export const addTransaction = async (params: AddTransactionInput & { userId: string }) => {
+    await addTransactionRepo({
+        ...params,
+        status: "COMPLETED",
+        voice_transcript: params.voice_transcript ?? null,
+    });
 };

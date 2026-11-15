@@ -1,10 +1,24 @@
-import { Request, Response, NextFunction } from "express";
+import * as Sentry from "@sentry/node";
+import type { Request, Response, NextFunction } from "express";
 
-export const errorHandler = (error: any,req: Request,res: Response,next: NextFunction) => {
-    console.error("Error:", error);
+export const errorHandler = (
+    error: Error & { statusCode?: number },
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const statusCode = error.statusCode ?? 500;
 
-    return res.status(error.statusCode || 500).json({
+    if (statusCode >= 500) {
+        Sentry.captureException(error);
+    }
+
+    if (res.headersSent) {
+        return next(error);
+    }
+
+    return res.status(statusCode).json({
         success: false,
-        message: error.message || "Internal server error",
+        message: statusCode >= 500 ? "Internal server error" : error.message,
     });
 };

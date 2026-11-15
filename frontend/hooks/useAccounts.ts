@@ -10,7 +10,7 @@ export const useAccountsQuery = () => {
     return useQuery({
         queryKey: queryKeys.accounts(user?.id),
         queryFn: getAccount,
-        staleTime: 30 * 1000,
+        staleTime: 120 * 1000,
         enabled: !!user?.id
     })
 

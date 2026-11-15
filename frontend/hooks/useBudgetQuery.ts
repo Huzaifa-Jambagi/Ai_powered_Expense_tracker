@@ -10,7 +10,7 @@ export const useBudgetQuery = () => {
     return useQuery({
         queryKey: queryKeys.budget(user?.id),
         queryFn: getBudget,
-        staleTime: 30 * 1000,
+        staleTime: 60 * 1000,
         enabled: !!user?.id
     })
 

@@ -3,6 +3,9 @@ import type { TransactionFilters } from "../../apis/transactionApis";
 export const queryKeys = {
     accounts: (userId?: string) => ["accounts", userId] as const,
 
+    transactionsRoot: (userId?: string) =>
+        ["transactions", userId] as const,
+
     transactions: (filters: TransactionFilters, userId?: string) =>
         ["transactions", userId, filters] as const,
 
@@ -15,5 +18,5 @@ export const queryKeys = {
         ["budget", userId, category] as const,
 
     expenseBreakdown: (month: string, userId?: string) =>
-    ["expenseBreakdown", userId, month] as const,
+        ["expenseBreakdown", userId, month] as const,
 };

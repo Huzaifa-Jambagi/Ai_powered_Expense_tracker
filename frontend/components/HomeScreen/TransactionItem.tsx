@@ -1,6 +1,8 @@
+import { memo } from "react";
 import { View, Text } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { type Transaction } from "../../apis/transactionApis";
+import { format, isValid } from "date-fns";
+
+import type { Transaction } from "../../apis/transactionApis";
 import { getCategoryConfig } from "../../constants/catogories";
 
 type TransactionItemProps = {
@@ -11,65 +13,58 @@ type TransactionItemProps = {
 
 const formatAmount = (amount: number, symbol: string) =>
     `${symbol}${Math.abs(amount).toLocaleString("en-IN", {
-        maximumFractionDigits: 0,
+        maximumFractionDigits: 2,
     })}`;
 
-export default function TransactionItem({
+function TransactionItem({
     transaction,
     currencySymbol = "₹",
     isBalanceVisible,
 }: TransactionItemProps) {
     const isIncome = transaction.type === "INCOME";
     const category = getCategoryConfig(transaction.category);
+    const amountColor = isIncome ? "#16A34A" : "#EF4444";
 
-    const color = isIncome ? "#15803D" : "#DB2777";
-    const backgroundColor = isIncome ? "#E8F7E9" : "#FCE7EF";
+    const transactionDate = new Date(transaction.date);
+    const dateLabel = isValid(transactionDate)
+        ? format(transactionDate, "EEE, dd MMM yyyy · hh:mm a")
+        : "";
 
     return (
-        <View className="flex-row items-center rounded-[22px] border border-gray-100 bg-white p-4">
-            {/* Category icon */}
-            <View
-                className="mr-4 h-[66px] w-[66px] items-center justify-center rounded-[22px]"
-                style={{ backgroundColor }}
-            >
-                <Text className="text-[30px]">{category.icon}</Text>
+        <View className="mb-2 flex-row items-center rounded-[18px] border border-gray-200/70 bg-white px-3 py-4">
+            {/* Category emoji */}
+            <View className="h-12 w-12 items-center justify-center rounded-full bg-pink-100">
+                <Text className="text-2xl">{category.icon}</Text>
             </View>
 
             {/* Transaction details */}
-            <View className="min-w-0 flex-1">
+            <View className="ml-3 flex-1 justify-center">
                 <Text
                     numberOfLines={1}
-                    className="text-[16px] font-bold text-gray-900"
+                    className="text-base font-bold text-slate-950"
                 >
-                    {transaction.description || category.label}
+                    {category.label}
                 </Text>
 
-                <View className="mt-2 flex-row items-center gap-2">
-                    <Feather name="edit-2" size={15} color="#858995" />
-
-                    <View
-                        className="rounded-full px-3 py-1"
-                        style={{ backgroundColor }}
-                    >
-                        <Text
-                            className="text-[12px] font-medium"
-                            style={{ color }}
-                        >
-                            {category.label}
-                        </Text>
-                    </View>
-                </View>
+                <Text className="mt-1 text-xs text-gray-400">
+                    {dateLabel}
+                </Text>
             </View>
 
             {/* Amount */}
             <Text
-                className="ml-2 text-[17px] font-bold"
-                style={{ color }}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.8}
+                className="ml-2 text-lg font-bold"
+                style={{ color: amountColor }}
             >
                 {isBalanceVisible
-                    ? `${isIncome ? "+" : "-"}${formatAmount(Number(transaction.amount), currencySymbol)}`
+                    ? `${isIncome ? "+" : "-"}${formatAmount(Number(transaction.amount) || 0, currencySymbol)}`
                     : "••••••"}
             </Text>
         </View>
     );
 }
+
+export default memo(TransactionItem);

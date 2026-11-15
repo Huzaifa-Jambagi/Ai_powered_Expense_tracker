@@ -15,7 +15,7 @@ export default function TransactionsHeader({
     return (
         <View className="flex-row items-center justify-between">
             <Text className="text-2xl font-bold text-slate-950">
-                Transactions
+                Transaction
             </Text>
 
             <View className="flex-row items-center gap-3">

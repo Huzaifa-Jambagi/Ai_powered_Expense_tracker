@@ -3,10 +3,12 @@ import type { Request, Response, NextFunction } from "express";
 import {
     getTransactions as getTransactionsService,
     getTransactionChart as getTransactionChartService,
+    addTransaction as addTransactionService,
 } from "./transaction.service.js";
 import {
     getTransactionsSchema,
     getTransactionChartSchema,
+    addTransactionSchema,
 } from "./transactions.validation.js";
 import { getExpenseBreakdown as getExpenseBreakdownService } from "./transaction.service.js";
 import { getExpenseBreakdownSchema } from "./transactions.validation.js";
@@ -133,6 +135,43 @@ export const getExpenseBreakdown = async (req: Request, res: Response, next: Nex
         });
 
         return res.status(200).json({ success: true, data: result });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const addTransactions = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { userId } = getAuth(req);
+
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized",
+            });
+        }
+
+        const validation = addTransactionSchema.safeParse(req.body);
+
+        if (!validation.success) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid transaction data",
+                errors: validation.error.flatten(),
+            });
+        }
+
+       await addTransactionService({ ...validation.data, userId });
+
+        return res.status(201).json({
+            success: true,
+            message: "Transaction added successfully",
+        });
+        
     } catch (error) {
         next(error);
     }

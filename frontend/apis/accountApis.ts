@@ -7,7 +7,7 @@ export type Account = {
     user_id: string;
     name: string;
     type: AccountType;
-    balance: number;
+    balance: string;
     is_default: boolean;
     created_at: string;
 };
