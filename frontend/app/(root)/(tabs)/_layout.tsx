@@ -1,4 +1,3 @@
-
 import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
@@ -52,6 +51,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        lazy: true,
         headerShown: false,
         tabBarActiveTintColor: "#C2185B",
         tabBarInactiveTintColor: "#5C5F68",

@@ -20,6 +20,10 @@ import TransactionsChart from "../../../../components/Transactions/TransactionsC
 import TransactionsFilterModal from "../../../../components/Transactions/TransactionsFilterModal";
 import TransactionItem from "../../../../components/Transactions/TransactionItem";
 
+import TransactionListSkeleton from "../../../../components/Transactions/Skeletons/TransactionListSkeleton";
+import TransactionChartSkeleton from "../../../../components/Transactions/Skeletons/TransactionsChartSkeleton";
+import TransactionSummarySkeleton from "../../../../components/Transactions/Skeletons/TransactionsSummarySkeleton";
+
 const EMPTY_TRANSACTIONS: Transaction[] = [];
 const EMPTY_CHART_DATA: DailyTransactionChart[] = [];
 
@@ -40,9 +44,9 @@ const keyExtractor = (item: Transaction) => item.id;
 export default function TransactionsScreen() {
   const router = useRouter();
 
-  const [filters, setFilters] = useState<TransactionFilters>({
-    month: getCurrentMonth(),
-  });
+  const [filters, setFilters] = useState<TransactionFilters>(() => ({
+  month: getCurrentMonth(),
+}));
 
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
 
@@ -70,9 +74,12 @@ export default function TransactionsScreen() {
   }), [filters.month, filters.type, filters.accountId]);
 
   const {
-    data: chartData = EMPTY_CHART_DATA,
+    data: chartQueryData,
     isLoading: isChartLoading,
+    isError: isChartError,
   } = useTransactionChartQuery(chartFilters);
+
+  const chartData = chartQueryData ?? EMPTY_CHART_DATA;
 
   // Flatten paginated transactions
   const transactions = useMemo(
@@ -131,26 +138,47 @@ export default function TransactionsScreen() {
   );
 
 
-  // List header
   const listHeader = useMemo(
     () => (
       <View className="gap-5">
         <TransactionsHeader onFilterPress={openFilterModal} />
 
-        <TransactionsSummary
-          income={summary.income}
-          expense={summary.expense}
-          net={summary.net}
-        />
+        {isChartLoading ? (
+          <>
+            <TransactionSummarySkeleton />
+            <TransactionChartSkeleton />
+          </>
+        ) : chartQueryData !== undefined ? (
+          <>
+            <TransactionsSummary
+              income={summary.income}
+              expense={summary.expense}
+              net={summary.net}
+            />
 
-        <TransactionsChart data={chartData} />
+            <TransactionsChart data={chartData} />
+          </>
+        ) : isChartError ? (
+          <View className="items-center rounded-[20px] bg-white py-8">
+            <Text className="text-sm text-gray-500">
+              Failed to load chart data.
+            </Text>
+          </View>
+        ) : null}
 
-        <Text className="text-xl font-semibold text-slate-800 mb-3">
+        <Text className="mb-3 text-xl font-semibold text-slate-800">
           Transactions
         </Text>
       </View>
     ),
-    [openFilterModal, summary, chartData]
+    [
+      openFilterModal,
+      isChartLoading,
+      chartQueryData,
+      isChartError,
+      summary,
+      chartData,
+    ]
   );
 
   return (
@@ -164,12 +192,18 @@ export default function TransactionsScreen() {
         keyExtractor={keyExtractor}
         ListHeaderComponent={listHeader}
         ListEmptyComponent={
-          !isLoading ? (
+          isLoading ? (
+            <TransactionListSkeleton count={5} />
+          ) : data !== undefined ? (
             <View className="items-center py-12">
               <Text className="text-sm text-gray-500">
-                {isError
-                  ? "Failed to load transactions."
-                  : "No transactions found."}
+                No transactions found.
+              </Text>
+            </View>
+          ) : isError ? (
+            <View className="items-center py-12">
+              <Text className="text-sm text-gray-500">
+                Failed to load transactions.
               </Text>
             </View>
           ) : null
