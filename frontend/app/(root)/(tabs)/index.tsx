@@ -25,6 +25,7 @@ import RecentTransactionsSkeleton from "../../../components/HomeScreen/RecentTra
 
 import MonthlyOverview from "../../../components/HomeScreen/MonthlyOverview";
 import MonthlyOverviewSkeleton from "../../../components/HomeScreen/MonthlyOverviewSkeleton";
+import { useRouter } from "expo-router";
 
 export const QUICK_ACTIONS = [
     {
@@ -51,6 +52,22 @@ const HomeScreen = () => {
     const user = userStorage.getUser();
     const currencySymbol = user?.currency_symbol ?? "₹";
     const currentMonth = format(new Date(), "yyyy-MM");
+
+    const router = useRouter();
+
+    const handleQuickActionPress = (action: string) => {
+        switch (action) {
+            case "scan":
+                router.navigate("/(root)/(tabs)/add-transactions");
+                break;
+            case "voice":
+                router.navigate("/(root)/(tabs)/add-transactions");
+                break;
+            case "manual":
+                router.navigate("/(root)/(tabs)/add-transactions");
+                break;
+        }
+    };
 
     const [isBalanceVisible, setIsBalanceVisible] = useState(true);
 
@@ -135,8 +152,10 @@ const HomeScreen = () => {
                     />
                 )}
 
-                <QuickActions actions={QUICK_ACTIONS} />
-
+                <QuickActions
+                    actions={QUICK_ACTIONS}
+                    onActionPress={handleQuickActionPress}
+                />
                 <AIPromptBar />
 
                 {breakdownLoading ? (
