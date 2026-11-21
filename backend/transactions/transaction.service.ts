@@ -1,6 +1,11 @@
 import { getMonthDateRange } from "../date.js";
-import { getExpenseBreakdownRepo, getTransactionChart as getTransactionChartRepo, getTransactions as getTransactionsRepo } from "./transaction.repository.js";
-import { addTransaction as addTransactionRepo } from "./transaction.repository.js";
+import {
+    getTransactions as getTransactionsRepo,
+    getTransactionChart as getTransactionChartRepo,
+    getExpenseBreakdownRepo,
+    addTransaction as addTransactionRepo,
+    deleteTransaction as deleteTransactionRepo,
+} from "./transaction.repository.js";
 import type { AddTransactionInput } from "./transactions.validation.js";
 
 interface GetTransactionsParams {
@@ -87,4 +92,15 @@ export const addTransaction = async (params: AddTransactionInput & { userId: str
         status: "COMPLETED",
         voice_transcript: params.voice_transcript ?? null,
     });
+};
+
+import { deleteTransaction as deleteTransactionRepository } from "./transaction.repository.js";
+
+type DeleteTransactionInput = {
+    id: string;
+    userId: string;
+};
+
+export const deleteTransaction = async ({ id, userId }: DeleteTransactionInput): Promise<boolean> => {
+    return deleteTransactionRepo({ id, userId });
 };

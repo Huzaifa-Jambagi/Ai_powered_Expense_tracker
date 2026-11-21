@@ -17,7 +17,6 @@ import HomeHeader from "../../../components/HomeScreen/HomeHeader";
 import BalanceCard from "../../../components/HomeScreen/BalanceCard";
 import BalanceCardSkeleton from "../../../components/HomeScreen/BalanceCardSkeleton";
 import QuickActions from "../../../components/HomeScreen/QuickActions";
-import AIPromptBar from "../../../components/HomeScreen/AiPromptBar";
 import ExpenseBreakdown from "../../../components/HomeScreen/ExpenseBreakdown";
 import ExpenseBreakdownSkeleton from "../../../components/HomeScreen/ExpenseBreakdownSkeleton";
 import RecentTransactions from "../../../components/HomeScreen/RecentTransactions";
@@ -149,7 +148,6 @@ const HomeScreen = () => {
                     actions={QUICK_ACTIONS}
                     onActionPress={handleQuickActionPress}
                 />
-                <AIPromptBar />
 
                 {breakdownLoading ? (
                     <ExpenseBreakdownSkeleton />

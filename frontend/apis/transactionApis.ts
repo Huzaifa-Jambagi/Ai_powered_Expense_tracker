@@ -117,6 +117,7 @@ export const addTransactionApi = async (payload: AddTransactionPayload): Promise
 
     return data;
 };
+
 export const deleteTransactionApi = async (id: string): Promise<AddTransactionResponse> => {
     const { data } = await api.delete<AddTransactionResponse>(`/api/v1/transactions/delete/${id}`);
 

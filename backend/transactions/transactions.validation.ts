@@ -94,3 +94,6 @@ export const addTransactionSchema = z.object({
 
 export type AddTransactionInput = z.infer<typeof addTransactionSchema>;
 
+export const deleteTransactionSchema = z.object({
+    id: z.string().uuid(),
+});

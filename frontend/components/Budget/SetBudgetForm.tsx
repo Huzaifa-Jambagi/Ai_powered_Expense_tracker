@@ -213,11 +213,10 @@ export default function SetBudgetForm({
                     onPress={confirmDelete}
                     disabled={isPending}
                     accessibilityRole="button"
-                    className={`h-12 flex-row items-center justify-center gap-2 rounded-xl border border-red-200 bg-white ${isPending ? "opacity-60" : ""
-                        }`}
+                    className={`h-12 flex-row items-center justify-center gap-2 rounded-xl bg-rose-600 ${isPending ? "opacity-60" : ""}`}
                 >
-                    <Feather name="trash-2" size={17} color="#DC2626" />
-                    <Text className="text-sm font-semibold text-red-600">
+                    <Feather name="trash-2" size={17} color="#FFFFFF" />
+                    <Text className="text-sm font-semibold text-white">
                         Delete Budget
                     </Text>
                 </Pressable>

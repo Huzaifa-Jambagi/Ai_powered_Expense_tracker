@@ -149,3 +149,51 @@ export const addTransaction = async (params: AddTransactionParams): Promise<void
         });
     });
 };
+
+interface DeleteTransactionParams {
+    id: string;
+    userId: string;
+}
+
+export const deleteTransaction = async ({ id, userId }: DeleteTransactionParams): Promise<boolean> => {
+    return db.transaction(async (tx) => {
+        const [deletedTransaction] = await tx
+            .delete(transactions)
+            .where(
+                and(
+                    eq(transactions.id, id),
+                    eq(transactions.user_id, userId),
+                )
+            )
+            .returning({
+                accountId: transactions.account_id,
+                type: transactions.type,
+                amount: transactions.amount,
+            });
+
+        if (!deletedTransaction) return false;
+
+        const balanceAdjustment = deletedTransaction.type === "EXPENSE"
+            ? deletedTransaction.amount
+            : `-${deletedTransaction.amount}`;
+
+        const [updatedAccount] = await tx
+            .update(accounts)
+            .set({
+                balance: sql`${accounts.balance} + ${balanceAdjustment}::numeric`,
+            })
+            .where(
+                and(
+                    eq(accounts.id, deletedTransaction.accountId),
+                    eq(accounts.user_id, userId),
+                )
+            )
+            .returning({ id: accounts.id });
+
+        if (!updatedAccount) {
+            throw new Error("Account not found while deleting transaction");
+        }
+
+        return true;
+    });
+};
