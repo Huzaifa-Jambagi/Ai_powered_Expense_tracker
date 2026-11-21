@@ -2,6 +2,7 @@ import { memo, useMemo, useState } from "react";
 import { Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 
 import type { DailyTransactionChart } from "../../apis/transactionApis";
+import { userStorage } from "../../lib/store";
 
 type TransactionsChartProps = {
     data: DailyTransactionChart[];
@@ -11,6 +12,12 @@ const CHART_HEIGHT = 140;
 const TICK_COUNT = 6;
 const Y_AXIS_WIDTH = 34;
 const MIN_ITEM_WIDTH = 42;
+
+const AXIS_UNITS = [
+    { size: 1e9, suffix: "B" },
+    { size: 1e6, suffix: "M" },
+    { size: 1e3, suffix: "K" },
+];
 
 const getNiceStep = (value: number) => {
     const magnitude = 10 ** Math.floor(Math.log10(value));
@@ -26,14 +33,14 @@ const getNiceStep = (value: number) => {
 };
 
 const formatAxisValue = (value: number) => {
-    if (value >= 1000) {
-        return `${Number((value / 1000).toFixed(1))}K`;
-    }
+    const unit = AXIS_UNITS.find(({ size }) => value >= size);
+    const scaled = unit ? value / unit.size : value;
 
-    return String(value);
+    return `${Number(scaled.toFixed(2))}${unit?.suffix ?? ""}`;
 };
 
-const formatCurrency = (value: number) => `₹${value.toLocaleString("en-IN")}`;
+const formatCurrency = (value: number, currencySymbol: string) =>
+    `${currencySymbol}${value.toLocaleString("en-IN")}`;
 
 const formatFullDate = (dateString: string) => {
     const [year, month, day] = dateString.split("-").map(Number);
@@ -58,6 +65,7 @@ const getDateLabel = (dateString: string, index: number) => {
 function TransactionsChart({ data }: TransactionsChartProps) {
     const { width } = useWindowDimensions();
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const currencySymbol = userStorage.getUser()?.currency_symbol ?? "₹";
 
     const { ticks, bars } = useMemo(() => {
         const parsed = data.map((item) => ({
@@ -214,14 +222,14 @@ function TransactionsChart({ data }: TransactionsChartProps) {
                         <View>
                             <Text className="text-xs text-slate-500">Income</Text>
                             <Text className="text-sm font-semibold text-green-600">
-                                {formatCurrency(selected.income)}
+                                {formatCurrency(selected.income, currencySymbol)}
                             </Text>
                         </View>
 
                         <View>
                             <Text className="text-xs text-slate-500">Expense</Text>
                             <Text className="text-sm font-semibold text-red-500">
-                                {formatCurrency(selected.expense)}
+                                {formatCurrency(selected.expense, currencySymbol)}
                             </Text>
                         </View>
                     </View>

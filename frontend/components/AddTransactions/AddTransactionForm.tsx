@@ -209,9 +209,9 @@ export default function AddTransactionForm() {
         setValue("category", CATEGORIES_BY_TYPE[nextType][0].key, { shouldValidate: true });
     };
 
-    const onSubmit = handleSubmit(async (values) => {
-        try {
-            await addTransaction.mutateAsync({
+    const onSubmit = handleSubmit((values) => {
+        addTransaction.mutate({
+            payload: {
                 accountId: values.accountId,
                 type: values.type,
                 amount: values.amount,
@@ -220,14 +220,12 @@ export default function AddTransactionForm() {
                 date: getTransactionTimestamp(values.date),
                 input_method: inputMethod,
                 voice_transcript: inputMethod === "mic" ? voiceTranscript : null,
-            });
-
-            Alert.alert("Transaction added", "Your transaction was saved successfully.", [
-                { text: "OK", onPress: () => router.replace("/transactions") },
-            ]);
-        } catch {
-            Alert.alert("Transaction failed", "Your transaction couldn't be saved. Please try again.");
-        }
+            },
+            currencySymbol,
+            onOptimisticUpdate: () => {
+                setTimeout(() => router.replace("/transactions"), 10);
+            }
+        });
     });
 
     return (
@@ -392,13 +390,16 @@ export default function AddTransactionForm() {
 
                 <Pressable
                     onPress={onSubmit}
-                    disabled={isSaveDisabled}
-                    className={`h-16 flex-row items-center justify-center rounded-2xl bg-green-800 ${isSaveDisabled ? "opacity-70" : "active:bg-green-900"}`}
+                    disabled={addTransaction.isPending}
+                    className={`h-12 flex-row items-center justify-center gap-2 rounded-xl bg-[#006341] ${addTransaction.isPending ? "opacity-60" : ""}`}
                 >
                     {addTransaction.isPending ? (
-                        <ActivityIndicator color="#FFFFFF" />
+                        <ActivityIndicator size="small" color="#FFFFFF" />
                     ) : (
-                        <Text className="text-lg font-bold text-white">Save Transaction</Text>
+                        <>
+                            <Feather name="check" size={18} color="white" />
+                            <Text className="text-sm font-semibold text-white">Save Transaction</Text>
+                        </>
                     )}
                 </Pressable>
             </ScrollView>

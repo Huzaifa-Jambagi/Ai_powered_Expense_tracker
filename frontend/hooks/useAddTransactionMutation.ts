@@ -63,8 +63,15 @@ const restoreCache = <T,>(queryClient: QueryClient, snapshots: CacheSnapshot<T>)
         if (data !== undefined) queryClient.setQueryData<T>(key, data);
     }
 };
+
 type DeleteTransactionVariables = {
     transaction: Transaction;
+    currencySymbol: string;
+    onOptimisticUpdate: () => void;
+};
+
+type AddTransactionVariables = {
+    payload: AddTransactionPayload;
     currencySymbol: string;
     onOptimisticUpdate: () => void;
 };
@@ -83,10 +90,10 @@ export const useAddTransactionMutation = () => {
     const { user } = useUser();
     const userId = user?.id;
 
-    return useMutation({
-        mutationFn: addTransactionApi,
+   return useMutation({
+    mutationFn: ({ payload }: AddTransactionVariables) => addTransactionApi(payload),
 
-        onMutate: async (payload): Promise<MutationContext | undefined> => {
+    onMutate: async ({ payload, onOptimisticUpdate }): Promise<MutationContext | undefined> => {
             if (!userId) return undefined;
 
             const keys: MutationQueryKeys = {
@@ -266,20 +273,33 @@ export const useAddTransactionMutation = () => {
                 );
             }
 
+            onOptimisticUpdate();
+
             return { keys, ...snapshots };
         },
 
         // Restore the exact previous cache values if the request fails.
-        onError: (_error, _payload, context) => {
-            if (!context) return;
+        onError: (error, { payload, currencySymbol }, context) => {
+            if (context) {
+                restoreCache(queryClient, context.transactions);
+                restoreCache(queryClient, context.charts);
+                restoreCache(queryClient, context.breakdowns);
+                restoreCache(queryClient, context.accounts);
 
-            restoreCache(queryClient, context.transactions);
-            restoreCache(queryClient, context.charts);
-            restoreCache(queryClient, context.breakdowns);
-            restoreCache(queryClient, context.accounts);
+                void invalidateTransactionQueries(queryClient, context.keys);
+            }
 
-            // Reconcile active queries in the background.
-            void invalidateTransactionQueries(queryClient, context.keys);
+            const transactionName = payload.description?.trim()
+                || getCategoryConfig(payload.category).label;
+
+            const amount = Number(payload.amount).toLocaleString("en-IN", {
+                maximumFractionDigits: 2,
+            });
+
+            Alert.alert(
+                "Transaction not saved",
+                `${transactionName} · ${currencySymbol}${amount} couldn't be saved. Your transaction lists and account balance have been restored.\n\n${error.message}`,
+            );
         },
 
         // Keep optimistic values and reconcile with server data after success.

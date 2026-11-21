@@ -167,7 +167,7 @@ export const addTransactions = async (
                 errors: validation.error.flatten(),
             });
         }
-
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         await addTransactionService({ ...validation.data, userId });
 
         return res.status(201).json({
