@@ -58,8 +58,6 @@ export const getBudget = async (req: Request, res: Response) => {
 export const setBudget = async (req: Request, res: Response) => {
     try {
         const { userId } = getAuth(req);
-        await delay(5000);
-
         const result = setBudgetSchema.safeParse(req.body);
 
         if (!result.success) {
@@ -92,7 +90,6 @@ export const deleteBudget = async (req: Request, res: Response) => {
     try {
         const { userId } = getAuth(req);
         const { id } = req.params;
-        await delay(5000);
 
         if (typeof id !== "string") {
             return res.status(400).json({

@@ -4,15 +4,14 @@ import { Feather } from "@expo/vector-icons";
 type QuickAction = {
     icon: string;
     label: string;
-    action: string;
+    action: "scan" | "voice" | "manual";
     color: string;
 };
 
 type QuickActionsProps = {
     actions: readonly QuickAction[];
-    onActionPress?: (action: string) => void;
+    onActionPress?: (action: QuickAction["action"]) => void;
 };
-
 export default function QuickActions({
     actions,
     onActionPress,

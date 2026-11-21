@@ -233,14 +233,10 @@ function DetailRow({
                 {/* Bottom actions - visual placeholders for now */}
                 <View className="flex-row items-center gap-3 border-t border-gray-100 px-5 py-4">
                     <View className="h-14 flex-1 flex-row items-center justify-center gap-3 rounded-full border border-gray-200">
-                        <Feather name="edit-2" size={20} color="#0F172A" />
-                        <Text className="text-base font-bold text-slate-950">
-                            Edit Transaction
-                        </Text>
-                    </View>
-
-                    <View className="h-14 w-14 items-center justify-center rounded-2xl bg-rose-100">
                         <Feather name="trash-2" size={22} color="#E11D48" />
+                        <Text className="text-base font-bold text-slate-950">
+                            Delete
+                        </Text>
                     </View>
                 </View>
             </SafeAreaView>

@@ -75,14 +75,6 @@ export const getTransactionsApi = async (filters: {
             };
         };
     }>("/api/v1/transactions/get", { params: filters });
-    console.log(
-        "TRANSACTION DATES:",
-        data.data.data.map((t) => ({
-            id: t.id,
-            date: t.date,
-            created_at: t.created_at,
-        })),
-    );
 
     return data.data;
 };
@@ -125,3 +117,11 @@ export const addTransactionApi = async (payload: AddTransactionPayload): Promise
 
     return data;
 };
+export const deleteTransactionApi = async (id: string): Promise<AddTransactionResponse> => {
+    const { data } = await api.delete<AddTransactionResponse>(`/api/v1/transactions/delete/${id}`);
+
+    if (!data.success) throw new Error(data.message || "Transaction could not be deleted.");
+
+    return data;
+};
+

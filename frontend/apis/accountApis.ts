@@ -14,6 +14,5 @@ export type Account = {
 
 export const getAccount = async (): Promise<Account[]> => {
     const { data } = await api.get<{ data: Account[] }>("/api/v1/accounts/get");
-    console.log("account fetched",data.data)
     return data.data;
 };

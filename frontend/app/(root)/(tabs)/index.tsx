@@ -55,19 +55,12 @@ const HomeScreen = () => {
 
     const router = useRouter();
 
-    const handleQuickActionPress = (action: string) => {
-        switch (action) {
-            case "scan":
-                router.navigate("/(root)/(tabs)/add-transactions");
-                break;
-            case "voice":
-                router.navigate("/(root)/(tabs)/add-transactions");
-                break;
-            case "manual":
-                router.navigate("/(root)/(tabs)/add-transactions");
-                break;
-        }
-    };
+   const handleQuickActionPress = (mode: "scan" | "voice" | "manual") => {
+    router.navigate({
+        pathname: "/(root)/(tabs)/add-transactions",
+        params: { mode },
+    });
+};
 
     const [isBalanceVisible, setIsBalanceVisible] = useState(true);
 

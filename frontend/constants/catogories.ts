@@ -153,3 +153,5 @@ export const getCategoryConfig = (key: CategoryKey) => CATEGORIES[key];
 // used in Gemini prompts - gives the model the full list of valid keys
 export const CATEGORY_KEYS_EXPENSE = EXPENSE_CATEGORIES.map((c) => c.key);
 export const CATEGORY_KEYS_INCOME = INCOME_CATEGORIES.map((c) => c.key);
+
+export const CATEGORY_KEYS = [...CATEGORY_KEYS_EXPENSE, ...CATEGORY_KEYS_INCOME] as [CategoryKey, ...CategoryKey[]];
