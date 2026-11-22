@@ -29,7 +29,7 @@ function TransactionItem({ transaction, onPress }: TransactionItemProps) {
       accessibilityLabel={`${category.label}, ${formatAmount(transaction.amount, currencySymbol)}`}
       className="mb-2 flex-row items-center rounded-[18px] border border-gray-200/70 bg-white px-3 py-3 active:bg-gray-50"
     >
-      {/* Category emoji */}
+     
       {/* Category emoji */}
       <View className="h-12 w-12 items-center justify-center rounded-full bg-pink-100">
         <Text className="text-2xl">{category.icon}</Text>

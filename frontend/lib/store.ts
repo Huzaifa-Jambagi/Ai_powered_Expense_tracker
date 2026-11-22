@@ -56,4 +56,19 @@ export const userStorage = {
   clearUser: () => {
     storage.remove("user");
   },
+
+  updateCurrency: (currency: string) => {
+    const user = userStorage.getUser();
+
+    if (!user) return;
+
+    storage.set(
+      "user",
+      JSON.stringify({
+        ...user,
+        currency,
+        currency_symbol: getSymbol(currency) ?? currency,
+      }),
+    );
+  },
 };

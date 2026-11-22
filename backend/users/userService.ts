@@ -9,3 +9,7 @@ export const getUserDetails = async (clerkId: string) => {
 export const completeOnboarding = async (clerkId: string, startingBalance: number, currency: string) => {
   return await userRepository.completeOnboarding(clerkId, startingBalance, currency);
 };
+
+export const updateCurrency = async (clerkId: string, currency: string) => {
+    return userRepository.updateCurrency(clerkId, currency);
+};

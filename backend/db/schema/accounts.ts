@@ -2,7 +2,10 @@ import { users } from "./users.js";
 import { pgTable, uuid, varchar, numeric, timestamp, boolean, index, uniqueIndex, pgEnum } from "drizzle-orm/pg-core";
 
 export const accountTypeEnum = pgEnum("account_type", [
-  "CASH", "BANK", "CREDIT_CARD", "SAVINGS"
+  "CASH",
+  "BANK",
+  "CREDIT_CARD",
+  "OTHER",
 ]);
 
 export const accounts = pgTable("accounts", {
@@ -12,7 +15,7 @@ export const accounts = pgTable("accounts", {
 
   type: accountTypeEnum("type").notNull().default("BANK"),
 
- balance: numeric("balance").notNull().default("0"),
+  balance: numeric("balance").notNull().default("0"),
   is_default: boolean("is_default").notNull().default(false),
 
   created_at: timestamp("created_at").notNull().defaultNow(),

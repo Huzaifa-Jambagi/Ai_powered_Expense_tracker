@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import { useRouter } from "expo-router";
+import { isAxiosError } from "axios";
 
 import { useUser } from "./useUser";
 import { userStorage } from "../lib/store";
@@ -14,12 +15,23 @@ export const useCompleteAuthentication = () => {
     setIsCompletingAuthentication(true);
 
     try {
-      const { data: backendUser, error } = await refetch();
+     const { data: backendUser, error } = await refetch();
 
-      if (error || !backendUser) {
-        Alert.alert("Account setup failed", "Unable to fetch your account details. Please try again.");
-        return;
-      }
+if (error || !backendUser) {
+    if (isAxiosError(error)) {
+        console.error("Backend user fetch failed:", {
+            status: error.response?.status,
+            message: error.message,
+            response: error.response?.data,
+            url: error.config?.url,
+        });
+    } else {
+        console.error("Backend user fetch failed:", error);
+    }
+
+    Alert.alert("Account setup failed", "Unable to fetch your account details. Please try again.");
+    return;
+}
 
       userStorage.setUser(backendUser);
 

@@ -48,3 +48,13 @@ export const completeOnboarding = async (clerkId: string, startingBalance: numbe
     return user;
   });
 };
+
+export const updateCurrency = async (clerkId: string, currency: string) => {
+    const [user] = await db
+        .update(users)
+        .set({ currency })
+        .where(eq(users.clerk_id, clerkId))
+        .returning();
+
+    return user ?? null;
+};

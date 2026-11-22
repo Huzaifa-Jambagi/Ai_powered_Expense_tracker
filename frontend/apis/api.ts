@@ -6,6 +6,7 @@ export const api = axios.create({
         "Content-Type": "application/json",
     },
 });
+console.log("BACKEND URL:", process.env.EXPO_PUBLIC_BACKEND_URL);
 
 api.interceptors.request.use((config) => {
     config.headers.set(

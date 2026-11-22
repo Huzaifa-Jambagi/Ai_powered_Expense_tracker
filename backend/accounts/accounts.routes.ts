@@ -1,8 +1,12 @@
 import { Router } from "express";
 import { auth } from "../middleware/auth.js";
-import {getAccounts} from "./accounts.controller.js"
-const router=Router();
+import { getAccounts, createAccount, updateAccount, deleteAccount } from "./accounts.controller.js";
 
-router.get("/get",auth,getAccounts)
+const router = Router();
 
-export default router
+router.get("/get", auth, getAccounts);
+router.post("/create", auth, createAccount);
+router.patch("/:accountId", auth, updateAccount);
+router.delete("/:accountId", auth, deleteAccount);
+
+export default router;
