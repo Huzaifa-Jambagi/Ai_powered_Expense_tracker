@@ -24,6 +24,5 @@ export const accounts = pgTable("accounts", {
     .notNull()
     .references(() => users.clerk_id, { onDelete: "cascade" }),
 }, (table) => [
-  index("accounts_user_id_idx").on(table.user_id),
   uniqueIndex("accounts_user_id_id_unique").on(table.user_id, table.id),
 ]);

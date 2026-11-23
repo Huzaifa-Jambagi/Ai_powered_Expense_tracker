@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
 import { getAuth } from "@clerk/express";
 import * as accountService from "./accounts.service.js";
-import { createAccountSchema } from "./accounts.validation.js";
-import { accountIdSchema, updateAccountSchema } from "./accounts.validation.js";
+import { accountIdSchema, createAccountSchema, updateAccountSchema } from "./accounts.validation.js";
 
 export const getAccounts = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);

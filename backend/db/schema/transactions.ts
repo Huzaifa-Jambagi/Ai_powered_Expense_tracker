@@ -1,6 +1,7 @@
 import { users } from "./users.js";
 import { accounts } from "./accounts.js";
 import { pgTable, uuid, varchar, numeric, timestamp, boolean, index, pgEnum, foreignKey } from "drizzle-orm/pg-core";
+import { commitments } from "./commitments.js";
 
 export const transactionTypeEnum = pgEnum("transaction_type", [
     "INCOME",
@@ -38,14 +39,23 @@ export const transactions = pgTable("transactions", {
     is_flagged: boolean("is_flagged").notNull().default(false),
 
     flag_reason: varchar("flag_reason", { length: 255 }),
+   
+    commitment_id: uuid("commitment_id"),
 
     created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    
+
     updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [
     index("transactions_user_account_date_id_idx").on(table.user_id, table.account_id, table.date, table.id),
     index("transactions_user_date_id_idx").on(table.user_id, table.date, table.id),
     index("transactions_user_type_date_id_idx").on(table.user_id, table.type, table.date, table.id),
+    index("transactions_user_commitment_idx").on(table.user_id, table.commitment_id),
+
+    foreignKey({
+        columns: [table.user_id, table.commitment_id],
+        foreignColumns: [commitments.user_id, commitments.id],
+    }),
+
     foreignKey({
         columns: [table.user_id, table.account_id],
         foreignColumns: [accounts.user_id, accounts.id],

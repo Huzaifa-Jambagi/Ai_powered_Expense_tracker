@@ -19,4 +19,13 @@ export const queryKeys = {
 
     expenseBreakdown: (month: string, userId?: string) =>
         ["expenseBreakdown", userId, month] as const,
+
+    subscriptionsRoot: (userId?: string) =>
+        ["subscriptions", userId] as const,
+
+    subscriptions: (userId?: string) =>
+        ["subscriptions", userId, "list"] as const,
+
+    subscription: (subscriptionId: string, userId?: string) =>
+        ["subscriptions", userId, "detail", subscriptionId] as const,
 };

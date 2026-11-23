@@ -2,8 +2,7 @@ import { and,eq } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { accounts } from "../db/schema/accounts.js";
 import { users } from "../db/schema/users.js";
-import type { CreateAccountInput } from "./accounts.validation.js";
-import type { UpdateAccountInput } from "./accounts.validation.js";
+import type { CreateAccountInput, UpdateAccountInput } from "./accounts.validation.js";
 
 export const getAccounts = async (clerkId: string) => {
     return db.

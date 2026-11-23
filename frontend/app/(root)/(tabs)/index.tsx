@@ -41,7 +41,7 @@ export const QUICK_ACTIONS = [
     },
     {
         icon: "plus",
-        label: "Add\nManually",
+        label: "Add\nTransactions",
         action: "manual",
         color: "#D81B60",
     },
@@ -54,13 +54,12 @@ const HomeScreen = () => {
 
     const router = useRouter();
 
-   const handleQuickActionPress = (mode: "scan" | "voice" | "manual") => {
-    router.navigate({
-        pathname: "/(root)/(tabs)/add-transactions",
-        params: { mode },
-    });
-};
-
+    const handleQuickActionPress = (mode: "scan" | "voice" | "manual") => {
+        router.navigate({
+            pathname: "/(root)/add-transactions",
+            params: { mode },
+        });
+    };
     const [isBalanceVisible, setIsBalanceVisible] = useState(true);
 
     const { data: accounts = [], isLoading: accountsLoading } = useAccountsQuery();

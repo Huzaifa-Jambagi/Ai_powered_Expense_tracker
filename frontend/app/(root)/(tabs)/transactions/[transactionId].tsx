@@ -261,7 +261,7 @@ export default function TransactionDetailsScreen() {
                     onPress={handleDelete}
                     disabled={deleteMutation.isPending}
                     accessibilityRole="button"
-                    className={`h-14 flex-row items-center justify-center gap-3 rounded-2xl bg-rose-700 ${deleteMutation.isPending ? "opacity-60" : "active:bg-rose-800"
+                    className={`h-14 flex-row items-center justify-center gap-3 rounded-2xl bg-rose-600 ${deleteMutation.isPending ? "opacity-60" : "active:bg-rose-700"
                         }`}
                 >
                     <Feather name="trash-2" size={20} color="#FFFFFF" />

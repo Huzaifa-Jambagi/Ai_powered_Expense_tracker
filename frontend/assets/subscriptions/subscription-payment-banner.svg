@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="220" viewBox="0 0 600 220" fill="none">
+  <defs>
+    <linearGradient id="banner" x1="30" y1="8" x2="570" y2="212" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1F8F3"/>
+      <stop offset="1" stop-color="#E8F2EB"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="74" y1="50" x2="155" y2="174" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F4F8F5"/>
+    </linearGradient>
+    <linearGradient id="green" x1="107" y1="38" x2="145" y2="184" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#176849"/>
+      <stop offset="1" stop-color="#00583D"/>
+    </linearGradient>
+    <filter id="cardShadow" x="24" y="24" width="178" height="180" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <filter id="badgeShadow" x="111" y="102" width="101" height="101" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <!-- Soft rounded banner -->
+  <rect x="2" y="2" width="596" height="216" rx="38" fill="url(#banner)"/>
+
+  <!-- Calendar shadow -->
+  <g transform="rotate(-7 112 111)" opacity="0.14" filter="url(#cardShadow)">
+    <rect x="52" y="48" width="112" height="128" rx="13" fill="#174C39"/>
+  </g>
+
+  <!-- Calendar illustration -->
+  <g transform="rotate(-7 112 111)">
+    <rect x="49" y="43" width="114" height="132" rx="13" fill="url(#paper)" stroke="#0B5A40" stroke-width="7"/>
+    <path d="M50 78H162" stroke="#0B5A40" stroke-width="7"/>
+    <path d="M74 29V53" stroke="#0B5A40" stroke-width="9" stroke-linecap="round"/>
+    <path d="M139 29V53" stroke="#0B5A40" stroke-width="9" stroke-linecap="round"/>
+    <path d="M74 29V43M139 29V43" stroke="#D7E9DE" stroke-width="3" stroke-linecap="round"/>
+
+    <rect x="65" y="91" width="19" height="17" rx="4" fill="#B9D9C6"/>
+    <rect x="96" y="91" width="19" height="17" rx="4" fill="#D8E9DE"/>
+    <rect x="127" y="91" width="19" height="17" rx="4" fill="#B9D9C6"/>
+    <rect x="65" y="121" width="19" height="17" rx="4" fill="#A8D3B9"/>
+    <rect x="96" y="121" width="19" height="17" rx="4" fill="#D8E9DE"/>
+    <rect x="127" y="121" width="19" height="17" rx="4" fill="#E4EFE8"/>
+    <rect x="65" y="150" width="19" height="13" rx="4" fill="#D8E9DE"/>
+    <rect x="96" y="150" width="19" height="13" rx="4" fill="#B9D9C6"/>
+  </g>
+
+  <!-- Check badge shadow -->
+  <circle cx="171" cy="151" r="32" fill="#00583D" opacity="0.18" filter="url(#badgeShadow)"/>
+
+  <!-- Check badge -->
+  <circle cx="171" cy="145" r="31" fill="url(#green)"/>
+  <path d="M157 145.5L166.5 155L185.5 134.5" stroke="#FFFFFF" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Banner copy -->
+  <text x="235" y="91" fill="#101B25" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="29" font-weight="700" letter-spacing="-0.8">Never miss a payment</text>
+  <text x="235" y="132" fill="#58616A" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="23" font-weight="400" letter-spacing="-0.35">Add your subscription details</text>
+  <text x="235" y="162" fill="#58616A" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif" font-size="23" font-weight="400" letter-spacing="-0.35">below.</text>
+</svg>

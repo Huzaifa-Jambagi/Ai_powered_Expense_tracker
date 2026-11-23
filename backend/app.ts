@@ -8,6 +8,7 @@ import userRoutes from "./users/userRoutes.js"
 import accountRoutes from "./accounts/accounts.routes.js"
 import transactionRoutes from "./transactions/transaction.route.js"
 import budgetRoutes from "./budget/budget.route.js"
+import subscriptionRoutes from "./subscriptions/subscription.routes.js"
 import { errorHandler } from "./middleware/errorHandler.js";
 import morgan from 'morgan';
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/accounts", accountRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/budgets", budgetRoutes);
+app.use("/api/v1/subscriptions", subscriptionRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

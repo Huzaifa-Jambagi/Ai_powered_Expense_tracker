@@ -10,6 +10,7 @@
     "@hookform/resolvers": "^6.0.0",
     "@react-native-community/datetimepicker": "9.1.0",
     "@tanstack/react-query": "^5.105.0",
+    "@thinkhuman/react-native-simple-icons": "^16.34.0",
     "axios": "^1.21.0",
     "babel-preset-expo": "~57.0.0",
     "country-to-currency": "^3.0.1",

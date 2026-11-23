@@ -2,7 +2,7 @@ import { Pressable, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import AddTransactionForm from "../../../components/AddTransactions/AddTransactionForm";
+import AddTransactionForm from "../../components/AddTransactions/AddTransactionForm";
 
 
 export default function AddTransactionsScreen() {
