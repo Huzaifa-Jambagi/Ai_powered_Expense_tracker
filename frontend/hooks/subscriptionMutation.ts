@@ -69,6 +69,7 @@ export const useMarkSubscriptionAsPaidMutation = (userId?: string) => {
             subscriptionId: string;
             accountId: string;
         }) => markSubscriptionAsPaid(subscriptionId, accountId),
+
         onSuccess: () => Promise.all([
             queryClient.invalidateQueries({
                 queryKey: queryKeys.subscriptionsRoot(userId),
@@ -78,6 +79,12 @@ export const useMarkSubscriptionAsPaidMutation = (userId?: string) => {
             }),
             queryClient.invalidateQueries({
                 queryKey: queryKeys.transactionsRoot(userId),
+            }),
+            queryClient.invalidateQueries({
+                queryKey: queryKeys.transactionChartRoot(userId),
+            }),
+            queryClient.invalidateQueries({
+                queryKey: queryKeys.expenseBreakdownRoot(userId),
             }),
         ]),
     });

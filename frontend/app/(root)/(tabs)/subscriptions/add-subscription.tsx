@@ -265,10 +265,11 @@ export default function AddSubscriptionScreen() {
                             value={nextBillingDate ? parseISO(nextBillingDate) : new Date()}
                             mode="date"
                             minimumDate={new Date()}
-                            onChange={(_, date) => {
+                            onValueChange={(_, date) => {
                                 setDatePickerVisible(false);
-                                if (date) setValue("nextBillingDate", format(date, "yyyy-MM-dd"), { shouldValidate: true });
+                                setValue("nextBillingDate", format(date, "yyyy-MM-dd"), { shouldValidate: true });
                             }}
+                            onDismiss={() => setDatePickerVisible(false)}
                         />
                     )}
                 </View>

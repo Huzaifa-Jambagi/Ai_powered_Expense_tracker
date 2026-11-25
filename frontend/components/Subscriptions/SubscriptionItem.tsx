@@ -7,6 +7,7 @@ import type { Subscription } from "../../apis/subscriptionApi";
 type Props = {
     subscription: Subscription;
     currencySymbol: string;
+    onPress: () => void;
 };
 
 const getBrandStyle = (name: string) => {

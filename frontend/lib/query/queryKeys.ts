@@ -9,6 +9,9 @@ export const queryKeys = {
     transactions: (filters: TransactionFilters, userId?: string) =>
         ["transactions", userId, filters] as const,
 
+    transactionChartRoot: (userId?: string) =>
+        ["transactionChart", userId] as const,
+
     transactionChart: (filters: TransactionFilters, userId?: string) =>
         ["transactionChart", userId, filters] as const,
 
@@ -16,6 +19,9 @@ export const queryKeys = {
 
     budgetByCategory: (userId?: string, category?: string) =>
         ["budget", userId, category] as const,
+
+    expenseBreakdownRoot: (userId?: string) =>
+        ["expenseBreakdown", userId] as const,
 
     expenseBreakdown: (month: string, userId?: string) =>
         ["expenseBreakdown", userId, month] as const,

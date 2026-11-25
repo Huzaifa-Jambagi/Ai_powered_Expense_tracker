@@ -54,12 +54,12 @@ export default function SubscriptionsScreen() {
         [subscriptions, currentMonth]
     );
 
-   const filteredSubscriptions = useMemo(
-    () => subscriptions.filter(subscription =>
-        filter === "ALL" || subscription.status === filter
-    ),
-    [subscriptions, filter]
-);
+    const filteredSubscriptions = useMemo(
+        () => subscriptions.filter(subscription =>
+            filter === "ALL" || subscription.status === filter
+        ),
+        [subscriptions, filter]
+    );
     return (
         <SafeAreaView className="flex-1 bg-[#F8F8F7]" edges={["top"]}>
             <ScrollView
@@ -108,13 +108,11 @@ export default function SubscriptionsScreen() {
                                 <Pressable
                                     key={item.value}
                                     onPress={() => setFilter(item.value)}
-                                    className={`rounded-full px-5 py-2.5 ${
-                                        selected ? "bg-[#006341]" : "bg-[#EBECEF]"
-                                    }`}
+                                    className={`rounded-full px-5 py-2.5 ${selected ? "bg-[#006341]" : "bg-[#EBECEF]"
+                                        }`}
                                 >
-                                    <Text className={`text-xs font-semibold ${
-                                        selected ? "text-white" : "text-[#454956]"
-                                    }`}>
+                                    <Text className={`text-xs font-semibold ${selected ? "text-white" : "text-[#454956]"
+                                        }`}>
                                         {item.label}
                                     </Text>
                                 </Pressable>
@@ -160,6 +158,10 @@ export default function SubscriptionsScreen() {
                                 key={subscription.id}
                                 subscription={subscription}
                                 currencySymbol={currencySymbol}
+                                onPress={() => router.push({
+                                    pathname: "/(root)/(tabs)/subscriptions/[subscriptionId]",
+                                    params: { subscriptionId: subscription.id },
+                                } as never)}
                             />
                         ))
                     )}
