@@ -1,7 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
-import { Text, View } from "react-native";
-
+import { Pressable, Text, View } from "react-native";
 import type { Subscription } from "../../apis/subscriptionApi";
 
 type Props = {
@@ -56,7 +55,7 @@ const getBillingLabel = (interval: number, unit: Subscription["billing_unit"]) =
     return `Every ${interval} ${unit.toLowerCase()}s`;
 };
 
-export default function SubscriptionItem({ subscription, currencySymbol }: Props) {
+export default function SubscriptionItem({ subscription, currencySymbol, onPress }: Props) {
     const brand = getBrandStyle(subscription.name);
     const isActive = subscription.status === "ACTIVE";
 
@@ -75,8 +74,10 @@ export default function SubscriptionItem({ subscription, currencySymbol }: Props
     );
 
     return (
-        <View className="flex-row items-center rounded-2xl border border-[#E9EAEB] bg-white px-3.5 py-3">
-            {/* Brand icon */}
+        <Pressable
+            onPress={onPress}
+            className="flex-row items-center rounded-2xl border border-[#E9EAEB] bg-white px-3.5 py-3"
+        >
             <View
                 className="mr-3 h-11 w-11 items-center justify-center rounded-xl"
                 style={{ backgroundColor: brand.background }}
@@ -110,20 +111,18 @@ export default function SubscriptionItem({ subscription, currencySymbol }: Props
 
             {/* Status */}
             <View
-                className={`ml-2 rounded-full px-3 py-1.5 ${
-                    isActive ? "bg-[#D8F3E3]" : "bg-[#FFF0CE]"
-                }`}
+                className={`ml-2 rounded-full px-3 py-1.5 ${isActive ? "bg-[#D8F3E3]" : "bg-[#FFF0CE]"
+                    }`}
             >
                 <Text
-                    className={`text-[11px] font-semibold ${
-                        isActive ? "text-[#17633E]" : "text-[#96651D]"
-                    }`}
+                    className={`text-[11px] font-semibold ${isActive ? "text-[#17633E]" : "text-[#96651D]"
+                        }`}
                 >
                     {isActive ? "Active" : "Paused"}
                 </Text>
             </View>
 
             <Feather name="chevron-right" size={20} color="#454956" />
-        </View>
+        </Pressable>
     );
 }
