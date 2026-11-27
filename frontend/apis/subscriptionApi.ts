@@ -11,6 +11,7 @@ export type Subscription = {
     billing_interval: number;
     billing_unit: BillingUnit;
     next_billing_date: string;
+    last_paid_at: string | null;
     status: SubscriptionStatus;
     created_at: string;
     updated_at: string;

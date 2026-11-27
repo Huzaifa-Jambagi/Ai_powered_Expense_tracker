@@ -3,6 +3,7 @@ import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { isSameMonth, parseISO } from "date-fns";
 
 import { userStorage } from "../../../../lib/store";
 
@@ -51,6 +52,10 @@ export default function SubscriptionDetailsScreen() {
     } = useDeleteSubscriptionMutation(userId);
 
     const isActive = subscription?.status === "ACTIVE";
+
+    const isAlreadyPaid = subscription?.last_paid_at
+        ? isSameMonth(parseISO(subscription.last_paid_at), new Date())
+        : false;
 
     const handlePayment = useCallback((accountId: string) => {
         markAsPaid(
@@ -163,6 +168,7 @@ export default function SubscriptionDetailsScreen() {
                 <SubscriptionDetailsActions
                     isActive={isActive}
                     isPaying={isPaying}
+                    isAlreadyPaid={isAlreadyPaid}
                     isUpdatingStatus={isUpdatingStatus}
                     isDeleting={isDeleting}
                     onMarkAsPaid={() => setAccountPickerVisible(true)}

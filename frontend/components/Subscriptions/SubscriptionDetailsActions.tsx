@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 type Props = {
     isActive: boolean;
+    isAlreadyPaid: boolean;
     isPaying: boolean;
     isUpdatingStatus: boolean;
     isDeleting: boolean;
@@ -15,6 +16,7 @@ type Props = {
 function SubscriptionDetailsActions({
     isActive,
     isPaying,
+    isAlreadyPaid,
     isUpdatingStatus,
     isDeleting,
     onMarkAsPaid,
@@ -26,16 +28,17 @@ function SubscriptionDetailsActions({
             {isActive && (
                 <Pressable
                     onPress={onMarkAsPaid}
-                    disabled={isPaying}
-                    className="h-[52px] flex-row items-center justify-center rounded-2xl bg-[#006341]"
+                    disabled={isPaying || isAlreadyPaid}
+                    className={`h-[52px] flex-row items-center justify-center rounded-2xl ${isAlreadyPaid ? "bg-[#E8F3EE]" : "bg-[#006341]"
+                        }`}
                 >
                     {isPaying ? (
                         <ActivityIndicator color="#FFFFFF" />
                     ) : (
                         <>
-                            <Feather name="check-circle" size={19} color="#FFFFFF" />
-                            <Text className="ml-2 text-sm font-bold text-white">
-                                Mark as Paid
+                            <Feather name="check-circle" size={19} color={isAlreadyPaid ? "#006341" : "#FFFFFF"} />
+                            <Text className={`ml-2 text-sm font-bold ${isAlreadyPaid ? "text-[#006341]" : "text-white"}`}>
+                                {isAlreadyPaid ? "Already Paid" : "Mark as Paid"}
                             </Text>
                         </>
                     )}

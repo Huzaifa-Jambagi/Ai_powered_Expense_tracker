@@ -20,7 +20,7 @@ export const getSubscriptions = async (userId: string) => {
         .select()
         .from(subscriptions)
         .where(eq(subscriptions.user_id, userId))
-        .orderBy(asc(subscriptions.next_billing_date), desc(subscriptions.created_at));
+        .orderBy(asc(subscriptions.next_billing_date));
 };
 
 export const getSubscriptionById = async (userId: string, subscriptionId: string) => {
@@ -99,7 +99,7 @@ export const deleteSubscription = async (userId: string, subscriptionId: string)
     return !!deletedSubscription;
 };
 
-export const markSubscriptionAsPaid = async (userId: string, subscriptionId: string, accountId: string, expectedNextBillingDate: string) => {
+export const markSubscriptionAsPaid = async (userId: string, subscriptionId: string, accountId: string) => {
     return db.transaction(async (tx) => {
         const [subscription] = await tx
             .select()
@@ -114,10 +114,6 @@ export const markSubscriptionAsPaid = async (userId: string, subscriptionId: str
 
         if (subscription.status !== "ACTIVE") {
             throw new SubscriptionRepositoryError("SUBSCRIPTION_NOT_ACTIVE", "Only active subscriptions can be marked as paid");
-        }
-
-        if (subscription.next_billing_date !== expectedNextBillingDate) {
-            throw new SubscriptionRepositoryError("BILLING_CYCLE_ALREADY_PROCESSED", "This billing cycle has already been processed");
         }
 
         const [account] = await tx
@@ -166,12 +162,13 @@ export const markSubscriptionAsPaid = async (userId: string, subscriptionId: str
             .update(subscriptions)
             .set({
                 next_billing_date: nextBillingDate,
+                last_paid_at: paidAt,
                 updated_at: paidAt,
             })
             .where(and(
                 eq(subscriptions.id, subscriptionId),
                 eq(subscriptions.user_id, userId),
-                eq(subscriptions.next_billing_date, expectedNextBillingDate),
+               eq(subscriptions.next_billing_date, subscription.next_billing_date)
             ))
             .returning();
 

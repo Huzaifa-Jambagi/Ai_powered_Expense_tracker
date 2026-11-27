@@ -31,6 +31,7 @@ export const subscriptions = pgTable("subscriptions", {
     billing_unit: billingUnitEnum("billing_unit").notNull().default("MONTH"),
 
     next_billing_date: date("next_billing_date", { mode: "string" }).notNull(),
+    last_paid_at: timestamp("last_paid_at", { withTimezone: true }),
 
     status: subscriptionStatusEnum("status").notNull().default("ACTIVE"),
 

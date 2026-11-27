@@ -55,7 +55,6 @@ export const subscriptionIdParamsSchema = z.object({
 
 export const markSubscriptionPaidSchema = z.object({
     accountId: z.string().uuid("Invalid account ID"),
-    nextBillingDate: dateSchema,
 });
 
 export type MarkSubscriptionPaidInput = z.infer<typeof markSubscriptionPaidSchema>;

@@ -43,15 +43,6 @@ export const deleteSubscription = async (userId: string, subscriptionId: string)
     return subscriptionRepository.deleteSubscription(userId, subscriptionId);
 };
 
-export const markSubscriptionAsPaid = (
-    userId: string,
-    subscriptionId: string,
-    input: MarkSubscriptionPaidInput,
-): Promise<MarkSubscriptionAsPaidResult> => {
-    return subscriptionRepository.markSubscriptionAsPaid(
-        userId,
-        subscriptionId,
-        input.accountId,
-        input.nextBillingDate,
-    );
+export const markSubscriptionAsPaid = (userId: string, subscriptionId: string, input: MarkSubscriptionPaidInput) => {
+    return subscriptionRepository.markSubscriptionAsPaid(userId, subscriptionId, input.accountId);
 };

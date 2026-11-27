@@ -129,10 +129,12 @@ export const deleteSubscription = async (req: Request, res: Response, next: Next
 
 export const markSubscriptionAsPaid = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
+    console.log(req.params,userId)
 
     if (!userId) return sendResponse(res, 401, false, "Unauthorized");
 
     const params = subscriptionIdParamsSchema.safeParse(req.params);
+    console.log(params)
 
     if (!params.success) return sendResponse(res, 400, false, "Invalid subscription ID", params.error.issues);
 
