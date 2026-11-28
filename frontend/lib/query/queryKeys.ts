@@ -34,4 +34,14 @@ export const queryKeys = {
 
     subscription: (subscriptionId: string, userId?: string) =>
         ["subscriptions", userId, "detail", subscriptionId] as const,
+
+    commitments: (userId?: string) => ["commitments", userId] as const,
+
+    commitment: (commitmentId: string, userId?: string) =>
+        ["commitments", userId, "detail", commitmentId] as const,
+    
+    commitmentDetailsRoot: (userId?: string) =>
+        ["commitments", userId, "detail"] as const,
+
+
 };

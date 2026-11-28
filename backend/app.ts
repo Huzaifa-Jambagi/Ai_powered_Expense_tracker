@@ -11,6 +11,7 @@ import budgetRoutes from "./budget/budget.route.js"
 import subscriptionRoutes from "./subscriptions/subscription.routes.js"
 import { errorHandler } from "./middleware/errorHandler.js";
 import morgan from 'morgan';
+import commitmentRoutes from "./commitment/commitment.routes.js";
 const app = express();
 
 // Middlewares
@@ -38,6 +39,7 @@ app.use("/api/v1/accounts", accountRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 app.use("/api/v1/budgets", budgetRoutes);
 app.use("/api/v1/subscriptions", subscriptionRoutes);
+app.use("/api/v1/commitments", commitmentRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
