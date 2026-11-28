@@ -66,22 +66,21 @@ function SubscriptionDetailsActions({
                 )}
             </Pressable>
 
-            <Pressable
-                onPress={onDelete}
-                disabled={isDeleting}
-                className="h-[49px] flex-row items-center justify-center rounded-2xl bg-[#FCEEEF]"
-            >
-                {isDeleting ? (
-                    <ActivityIndicator color="#C53D49" />
-                ) : (
-                    <>
-                        <Feather name="trash-2" size={17} color="#C53D49" />
-                        <Text className="ml-2 text-sm font-semibold text-[#C53D49]">
-                            Delete Subscription
-                        </Text>
-                    </>
-                )}
-            </Pressable>
+       <Pressable
+    onPress={onDelete}
+    disabled={isDeleting}
+    accessibilityRole="button"
+    className={`h-14 flex-row items-center justify-center gap-3 rounded-2xl bg-rose-600 ${isDeleting ? "opacity-60" : "active:bg-rose-700"}`}
+>
+    {isDeleting ? (
+        <ActivityIndicator color="#FFFFFF" />
+    ) : (
+        <>
+            <Feather name="trash-2" size={20} color="#FFFFFF" />
+            <Text className="text-base font-bold text-white">Delete Subscription</Text>
+        </>
+    )}
+</Pressable>
         </View>
     );
 }
