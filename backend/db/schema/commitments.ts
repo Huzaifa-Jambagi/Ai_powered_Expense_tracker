@@ -1,15 +1,10 @@
 import { users } from "./users.js";
-import { pgTable, uuid, varchar, numeric, timestamp, text, index, uniqueIndex, pgEnum, check } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, numeric, timestamp, index, uniqueIndex, pgEnum, check } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 export const commitmentTypeEnum = pgEnum("commitment_type", [
     "PAY",
     "RECEIVE",
-]);
-
-export const commitmentStatusEnum = pgEnum("commitment_status", [
-    "OPEN",
-    "CANCELLED",
 ]);
 
 export const commitments = pgTable("commitments", {
@@ -35,19 +30,13 @@ export const commitments = pgTable("commitments", {
 
     notes: varchar("notes", { length: 155 }),
 
-    status: commitmentStatusEnum("status").notNull().default("OPEN"),
-
     created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 
     updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [
     uniqueIndex("commitments_user_id_id_unique").on(table.user_id, table.id),
 
-    index("commitments_user_type_status_idx").on(
-        table.user_id,
-        table.type,
-        table.status
-    ),
+    index("commitments_user_type_idx").on(table.user_id, table.type),
 
     check("commitments_amount_positive", sql`${table.amount} > 0`),
 
